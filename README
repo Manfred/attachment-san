@@ -1,11 +1,10 @@
 Attachment-San
 
   Plugin for easy and rich attachment manipulation.
-  
+
   Although the ideas behind Attachment-San are different, it borrows heavily on both attachment_fu and acts_as_attachment by Rick Olson. 
 
 Dependencies
 
   General: A recent Rails (>=2.0.2)
   Development: Bacon and SQLite3
-  

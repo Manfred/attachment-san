@@ -7,6 +7,9 @@ ENV['RAILS_ENV'] = 'test'
 
 require 'rubygems' rescue LoadError
 require 'active_record'
+
+require 'init'
+
 require 'sqlite3'
 require 'bacon'
 
@@ -15,3 +18,4 @@ ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :dbfile => File.j
 
 require 'schema'
 require 'attachments'
+require 'upload_helpers'
