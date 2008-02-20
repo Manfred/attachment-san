@@ -1,12 +1,13 @@
+require 'active_record/attachment_san/mime_types'
+
 module ActiveRecord :nodoc
   module AttachmentSan
     module ClassMethods
-      def has_attachment_accessors(options={})
+      def attachment_san(options={})
         unless included_modules.include?(InstanceMethods)
           include InstanceMethods
         end
       end
-      alias_method :attachment_okudasai, :has_attachment_accessors
     end
 
     module InstanceMethods

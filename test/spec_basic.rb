@@ -20,4 +20,9 @@ describe "Attachment-San" do
     attachment = Attachment.new :uploaded_data => data
     File.exist?(attachment.attachment.uploaded_file.path).should == true
   end
+
+  it "should save the file to the webroot on create" do
+    attachment = Attachment.create :uploaded_data => uploaded_file(@rails_icon, 'image/png')
+    File.exist?(attachment.attachment.filename).should == true
+  end
 end

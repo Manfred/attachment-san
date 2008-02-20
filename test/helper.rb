@@ -7,6 +7,7 @@ ENV['RAILS_ENV'] = 'test'
 
 require 'rubygems' rescue LoadError
 require 'active_record'
+require 'action_controller'
 
 require 'init'
 

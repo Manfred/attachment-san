@@ -1,3 +1,3 @@
 class Attachment < ActiveRecord::Base
-  has_attachment_accessors
+  attachment_san
 end
