@@ -16,9 +16,9 @@ module ActiveRecord :nodoc
         self.filename = data.original_filename if respond_to?(:filename)
         if data.is_a?(StringIO)
           data.rewind
-          attachment.temp_data = data.read
+          attachment.uploaded_data = data
         else
-          attachment.temp_path = data.path
+          attachment.uploaded_file = data
         end
       end
 
@@ -28,20 +28,18 @@ module ActiveRecord :nodoc
     end
 
     class AttachmentProxy
+      attr_accessor :model, :uploaded_file
+
       def initialize(model)
         @model = model
       end
 
-      def temp_data=(data)
+      def uploaded_data=(data)
         unless data.nil?
-          temp_file = Tempfile.new(filename)
-          temp_file.binmode
-          temp_file.write data
-          temp_path = temp_file.path
+          self.uploaded_file = Tempfile.new(model.filename)
+          self.uploaded_file.binmode
+          self.uploaded_file.write data
         end
-      end
-
-      def temp_path=(path)
       end
     end
   end
