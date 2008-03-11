@@ -1,4 +1,5 @@
 require 'active_record/attachment_san/mime_types'
+require 'active_record/attachment_san/attachment_proxy'
 
 module ActiveRecord :nodoc
   module AttachmentSan
@@ -9,7 +10,7 @@ module ActiveRecord :nodoc
         end
       end
     end
-
+    
     module InstanceMethods
       def uploaded_data=(data)
         return nil if data.nil? || data.size == 0 
@@ -22,25 +23,9 @@ module ActiveRecord :nodoc
           attachment.uploaded_file = data
         end
       end
-
+      
       def attachment
         @attachment ||= AttachmentProxy.new(self)
-      end
-    end
-
-    class AttachmentProxy
-      attr_accessor :model, :uploaded_file
-
-      def initialize(model)
-        @model = model
-      end
-
-      def uploaded_data=(data)
-        unless data.nil?
-          self.uploaded_file = Tempfile.new(model.filename)
-          self.uploaded_file.binmode
-          self.uploaded_file.write data
-        end
       end
     end
   end
