@@ -7,6 +7,7 @@ module ActiveRecord :nodoc
       def attachment_san(options={})
         unless included_modules.include?(InstanceMethods)
           include InstanceMethods
+          after_save AttachmentProxy
         end
       end
     end

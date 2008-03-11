@@ -16,15 +16,24 @@ module ActiveRecord :nodoc
       end
       
       def filename
-        File.join(webroot, path, model.filename)
+        File.join(filepath, model.filename)
       end
       
-      def path
-        model.class.to_s.tableize
+      def filepath
+        File.join(webroot, model.class.to_s.tableize)
       end
       
       def webroot
         File.join(RAILS_ROOT, 'public')
+      end
+      
+      def finalize_uploaded_file
+        FileUtils.mkdir_p(filepath)
+        FileUtils.cp(uploaded_file.path, filename)
+      end
+      
+      def self.after_save(record)
+        record.attachment.finalize_uploaded_file
       end
     end
   end
