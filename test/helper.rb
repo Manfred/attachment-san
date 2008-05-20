@@ -16,9 +16,14 @@ require 'init'
 require 'sqlite3'
 require 'mocha'
 require 'bacon'
+require 'fileutils'
 
-ActiveRecord::Base.logger = Logger.new File.join(TEST_ROOT_DIR, '/log/test.log')
-ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :dbfile => File.join(TEST_ROOT_DIR, '/db/test.db'))
+logdir = File.join(TEST_ROOT_DIR, 'log')
+FileUtils.mkdir_p(logdir)
+ActiveRecord::Base.logger = Logger.new File.join(logdir, 'test.log')
+dbdir = File.join(TEST_ROOT_DIR, 'db')
+FileUtils.mkdir_p(dbdir)
+ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :dbfile => File.join(dbdir, 'test.db'))
 
 # Classes and methods to aid testing
 require 'schema'
