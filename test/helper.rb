@@ -1,18 +1,25 @@
 TEST_ROOT_DIR = File.dirname(__FILE__)
 
+%w(activerecord actionpack).each do |d|
+  $:.unshift File.expand_path(File.join(TEST_ROOT_DIR, "/../../../rails/#{d}/lib"))
+end
 $:.unshift File.join(TEST_ROOT_DIR, '/../lib')
 $:.unshift File.join(TEST_ROOT_DIR, '/lib')
 
 ENV['RAILS_ENV'] = 'test'
 
 # Rails libs
-require 'rubygems' rescue LoadError
-require 'active_record'
-require 'action_controller'
+begin
+  require 'active_record'
+  require 'action_controller'
+rescue LoadError
+  raise "Please install Attachment-San as Rails plugin before running the tests."
+end
 
 require 'init'
 
 # Libraries for testing
+require 'rubygems' rescue LoadError
 require 'sqlite3'
 require 'mocha'
 require 'bacon'

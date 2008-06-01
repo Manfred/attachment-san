@@ -7,7 +7,7 @@ describe "Attachment-San" do
   end
   
   it "should handle files coming from CGI when instanciated" do
-    attachment = Attachment.new :uploaded_data => uploaded_file(@rails_icon, 'image/png')
+    attachment = Attachment.new :uploaded_data => rails_icon
     File.exist?(attachment.attachment.uploaded_file.path).should == true
   end
   
@@ -23,7 +23,31 @@ describe "Attachment-San" do
   end
   
   it "should save the file to the webroot on create" do
-    attachment = Attachment.create :uploaded_data => uploaded_file(@rails_icon, 'image/png')
+    attachment = Attachment.create :uploaded_data => rails_icon
     File.exist?(attachment.attachment.filename).should == true
+  end
+  
+  it "should run before_upload before handling the uploaded file data" do
+    attachment = Attachment.new
+    attachment.expects(:prepare_uploaded_file).raises(Exception.new)
+    begin
+      attachment.uploaded_data = rails_icon
+    rescue Exception
+    end
+    attachment.content_type.should.be.blank
+    attachment.filename.should.be.blank
+    attachment.attachment.uploaded_file.should.be.blank
+  end
+  
+  it "should run after_upload after handling the uploaded file data" do
+    attachment = Attachment.new
+    attachment.expects(:process_uploaded_file).raises(Exception.new)
+    begin
+      attachment.uploaded_data = rails_icon
+    rescue Exception
+    end
+    attachment.content_type.should.not.be.blank
+    attachment.filename.should.not.be.blank
+    attachment.attachment.uploaded_file.should.not.be.blank
   end
 end
