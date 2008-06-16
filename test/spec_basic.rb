@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/helper'
 describe "Attachment-San" do
   before do
     @rails_icon = File.join(TEST_ROOT_DIR, 'fixtures/files/rails.png')
-    ActiveRecord::AttachmentSan::AttachmentProxy.any_instance.stubs(:webroot).returns(Dir.tmpdir)
+    ActiveRecord::AttachmentSan::AttachmentProxy.stubs(:webroot).returns(File.join(Dir.tmpdir, 'assets'))
   end
   
   it "should handle files coming from CGI when instanciated" do
@@ -22,8 +22,9 @@ describe "Attachment-San" do
     File.exist?(attachment.attachment.uploaded_file.path).should == true
   end
   
-  it "should save the file to the webroot on create" do
+  it "should save the file to the webroot" do
     attachment = Attachment.create :uploaded_data => rails_icon
+    attachment.attachment.write_to_webroot
     File.exist?(attachment.attachment.filename).should == true
   end
   

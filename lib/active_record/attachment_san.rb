@@ -7,7 +7,6 @@ module ActiveRecord :nodoc
       def attachment_san(options={})
         unless included_modules.include?(InstanceMethods)
           include InstanceMethods
-          after_save AttachmentProxy
           define_callbacks :before_upload, :after_upload
         end
       end
@@ -17,8 +16,8 @@ module ActiveRecord :nodoc
       def uploaded_data=(data)
         callback(:before_upload)
         return nil if data.nil? || data.size == 0 
-        self.content_type = data.content_type if respond_to?(:content_type)
-        self.filename = data.original_filename if respond_to?(:filename)
+        self.content_type = data.content_type.to_s if respond_to?(:content_type)
+        self.filename = data.original_filename.to_s if respond_to?(:filename)
         if data.is_a?(StringIO)
           data.rewind
           attachment.uploaded_data = data
