@@ -11,8 +11,8 @@ describe "Attachment-San" do
     File.exist?(attachment.attachment.uploaded_file.path).should == true
   end
   
-  it "should handle data coming from CGI when instanciated" do
-    data = StringIO.new
+  it "should handle StringIO data coming from CGI when instanciated" do
+    data = StringIO.new('Fake image data')
     data.instance_eval do
       def content_type; 'image/png'; end
       def original_filename; 'rails.png'; end
@@ -20,6 +20,11 @@ describe "Attachment-San" do
     data << File.read(@rails_icon)
     attachment = Attachment.new :uploaded_data => data
     File.exist?(attachment.attachment.uploaded_file.path).should == true
+    (File.size(attachment.attachment.uploaded_file.path) > 0).should == true
+  end
+  
+  it "should handle file data coming from CGI when instanciated" do
+    should.flunk 'Implement test'
   end
   
   it "should save the file to the webroot" do

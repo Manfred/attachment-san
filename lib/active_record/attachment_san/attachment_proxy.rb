@@ -18,6 +18,7 @@ module ActiveRecord :nodoc
           self.uploaded_file = Tempfile.new(model.filename)
           self.uploaded_file.binmode
           self.uploaded_file.write data
+          self.uploaded_file.close
         end
       end
       
