@@ -8,7 +8,7 @@ task :spec do
   Bacon.extend Bacon::SpecDoxOutput
   Bacon.summary_on_exit
 
-  Dir[File.dirname(__FILE__) + '/test/**/spec_*.rb'].each do |file|
+  Dir[File.dirname(__FILE__) + '/test/**/*_spec.rb'].each do |file|
     load file
   end
 end
