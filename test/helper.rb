@@ -1,8 +1,20 @@
-TEST_ROOT_DIR = File.dirname(__FILE__)
+TEST_ROOT_DIR = File.expand_path(File.dirname(__FILE__))
 
-%w(activerecord actionpack).each do |d|
-  $:.unshift File.expand_path(File.join(TEST_ROOT_DIR, "/../../../rails/#{d}/lib"))
+frameworks = %w(activesupport activerecord actionpack)
+
+rails = [
+  File.expand_path('../../../rails', TEST_ROOT_DIR),
+  File.expand_path('../../rails', TEST_ROOT_DIR)
+].detect do |possible_rails|
+  begin
+    entries = Dir.entries(possible_rails)
+    frameworks.all? { |framework| entries.include?(framework) }
+  rescue Errno::ENOENT
+    false
+  end
 end
+
+frameworks.each { |framework| $:.unshift(File.join(rails, framework, 'lib')) }
 $:.unshift File.join(TEST_ROOT_DIR, '/../lib')
 $:.unshift File.join(TEST_ROOT_DIR, '/lib')
 
@@ -10,6 +22,7 @@ ENV['RAILS_ENV'] = 'test'
 
 # Rails libs
 begin
+  require 'active_support'
   require 'active_record'
   require 'action_controller'
 rescue LoadError

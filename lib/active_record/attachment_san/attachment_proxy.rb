@@ -17,7 +17,7 @@ module ActiveRecord :nodoc
         unless data.nil?
           self.uploaded_file = Tempfile.new(model.filename)
           self.uploaded_file.binmode
-          self.uploaded_file.write data
+          self.uploaded_file.write(data.read)
           self.uploaded_file.close
         end
       end
@@ -56,23 +56,38 @@ module ActiveRecord :nodoc
       
       def convert(operations, output_path)
         FileUtils.mkdir_p(File.dirname(output_path))
-        execute "#{self.class.image_magic_path}/convert '#{uploaded_file.path}' #{ operations.map { |op, arg| "-#{op} #{arg}" }.join(' ') } '#{output_path}'"
+        execute "#{self.class.convert_command} '#{uploaded_file.path}' #{ operations.map { |op, arg| "-#{op} #{arg}" }.join(' ') } '#{output_path}'"
       end
       
       def execute(command)
         stdin, stdout, stderr = Open3.popen3(command)
-        output = stdout.gets(nil)
-        if output.nil? && (error_message = stderr.gets)
-          if error_message =~ /:in\s`exec':\s(.+)\s\(.+\)$/
-            error_message = $1
+        begin
+          output = stdout.gets(nil)
+          if output.nil? && (error_message = stderr.gets)
+            if error_message =~ /:in\s`exec':\s(.+)\s\(.+\)$/
+              error_message = $1
+            end
+            raise AttachmentProcessingError, "Command: \"#{command}\"\nOutput: \"#{error_message.chomp}\""
           end
-          raise AttachmentProcessingError, "Command: \"#{command}\"\nOutput: \"#{error_message.chomp}\""
+          output
+        ensure
+          stdin.close
+          stdout.close
+          stderr.close
+          ''
         end
-        output
       end
       
-      def self.image_magic_path
-        '/opt/local/bin'
+      def self.convert_command
+        if @convert_command.nil?
+          %w(/opt/local/bin /usr/local/bin /usr/bin /opt/imagemagick/bin).each do |path|
+            if File.exist?(convert = File.join(path, 'convert'))
+              return(@convert_command = convert)
+            end
+          end
+          raise AttachmentProcessingError, "Can't find `convert' from ImageMagick, please make sure it's installed"
+        end
+        @convert_command
       end
       
       def self.webroot

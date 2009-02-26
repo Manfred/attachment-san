@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/helper'
+require File.expand_path('../helper', __FILE__)
 
-describe "Attachment-San" do
+describe "A record infused with Attachment-San" do
   before do
     @rails_icon = File.join(TEST_ROOT_DIR, 'fixtures/files/rails.png')
     ActiveRecord::AttachmentSan::AttachmentProxy.stubs(:webroot).returns(File.join(Dir.tmpdir, 'assets'))
@@ -11,8 +11,8 @@ describe "Attachment-San" do
     File.exist?(attachment.attachment.uploaded_file.path).should == true
   end
   
-  it "should handle StringIO data coming from CGI when instanciated" do
-    data = StringIO.new('Fake image data')
+  it "should handle data coming from CGI when instanciated" do
+    data = StringIO.new
     data.instance_eval do
       def content_type; 'image/png'; end
       def original_filename; 'rails.png'; end
@@ -20,17 +20,11 @@ describe "Attachment-San" do
     data << File.read(@rails_icon)
     attachment = Attachment.new :uploaded_data => data
     File.exist?(attachment.attachment.uploaded_file.path).should == true
-    (File.size(attachment.attachment.uploaded_file.path) > 0).should == true
   end
   
-  it "should handle file data coming from CGI when instanciated" do
-    should.flunk 'Implement test'
-  end
-  
-  it "should save the file to the webroot" do
-    attachment = Attachment.create :uploaded_data => rails_icon
-    attachment.attachment.write_to_webroot
-    File.exist?(attachment.attachment.filename).should == true
+  it "should return an attachment proxy" do
+    attachment = Attachment.new :uploaded_data => rails_icon
+    attachment.attachment.should.be.kind_of(ActiveRecord::AttachmentSan::AttachmentProxy)
   end
   
   it "should run before_upload before handling the uploaded file data" do
