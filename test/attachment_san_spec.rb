@@ -19,7 +19,7 @@ describe "A record infused with Attachment-San" do
     end
     data << File.read(@rails_icon)
     attachment = Attachment.new :uploaded_data => data
-    File.exist?(attachment.attachment.uploaded_file.path).should == true
+    File.should.exist(attachment.attachment.uploaded_file.path)
   end
   
   it "should return an attachment proxy" do
