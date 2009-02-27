@@ -7,10 +7,11 @@ module ActiveRecord :nodoc
     class AttachmentProcessingError < StandardError; end
     
     class AttachmentProxy
-      attr_accessor :model, :uploaded_file
+      attr_accessor :model, :options, :uploaded_file
       
-      def initialize(model)
+      def initialize(model, options={})
         @model = model
+        @options = options
       end
       
       def uploaded_data=(data)

@@ -8,6 +8,11 @@ describe "AttachmentProxy" do
   it "should find convert from ImageMagick on the system (fails when ImageMagick isn't installed)" do
     ActiveRecord::AttachmentSan::AttachmentProxy.convert_command.should.end_with('convert')
   end
+  
+  it "should accept options when initialized" do
+    proxy = ActiveRecord::AttachmentSan::AttachmentProxy.new(Attachment.new, {:keep_filename => true})
+    proxy.options.should == { :keep_filename => true }
+  end
 end
 
 describe "An AttachmentProxy" do

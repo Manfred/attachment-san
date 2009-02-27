@@ -49,7 +49,7 @@ module ActiveRecord # :nodoc:
       
       # Returns an attachment proxy instance for the record.
       def attachment
-        @attachment ||= AttachmentProxy.new(self)
+        @attachment ||= AttachmentProxy.new(self, self.class.attachment_san_options)
       end
     end
   end
