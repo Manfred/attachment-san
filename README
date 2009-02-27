@@ -6,5 +6,5 @@ Attachment-San
 
 Dependencies
 
-  General: A recent Rails (>=2.0.2)
+  General: A recent Rails (at least 2.0, though it's most often tested on Edge)
   Development: Bacon and SQLite3

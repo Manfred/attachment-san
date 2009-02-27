@@ -3,7 +3,7 @@ require 'open3'
 require 'fileutils'
 
 module ActiveRecord :nodoc
-  module AttachmentSan :nodoc
+  module AttachmentSan
     class AttachmentProcessingError < StandardError; end
     
     class AttachmentProxy

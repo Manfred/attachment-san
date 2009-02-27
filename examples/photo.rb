@@ -1,5 +1,5 @@
 class Photo < ActiveRecord::Base
-  attachment_san :allows => Mime::JPG
+  attachment_san
   after_upload :make_black
   
   has_one :thumbnail, :class => 'Photo'
@@ -29,7 +29,7 @@ class Attachment < ActiveRecord::Base
 end
 
 class Thumbnail < Attachment
-  attachment_san :resizes_to => "<300x400"
+  attachment_san
   
   def resize(image)
     attachment.resize(image)
@@ -37,5 +37,5 @@ class Thumbnail < Attachment
 end
 
 class FullSize < Attachment
-  attachment_san :resizes_to => "<600x800"
+  attachment_san :keep_filenames => true
 end
