@@ -23,7 +23,10 @@ module ActiveRecord # :nodoc:
         unless included_modules.include?(InstanceMethods)
           include InstanceMethods
           define_callbacks :before_upload, :after_upload
+          class_inheritable_accessor :attachment_san_options
+          self.attachment_san_options = {}
         end
+        self.attachment_san_options.merge!(options)
       end
     end
     

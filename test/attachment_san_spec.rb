@@ -1,5 +1,31 @@
 require File.expand_path('../helper', __FILE__)
 
+class Document < ActiveRecord::Base
+  attachment_san :keep_filename => true
+end
+
+class Drawing < Document
+  attachment_san :accept => Mime::PNG
+end
+
+class DrawingThumbnail < Document
+  attachment_san :accept => Mime::PNG, :keep_filename => false
+end
+
+describe "The attachmen_san classmethod" do
+  it "should allow you to set options" do
+    Document.attachment_san_options.should == { :keep_filename => true }
+  end
+  
+  it "should allow you to add options in subclasses" do
+    Drawing.attachment_san_options.should == { :keep_filename => true, :accept => Mime::PNG }
+  end
+  
+  it "should allow you to override options in subclasses" do
+    DrawingThumbnail.attachment_san_options.should == { :keep_filename => false, :accept => Mime::PNG }
+  end
+end
+
 describe "A record infused with Attachment-San" do
   before do
     @rails_icon = File.join(TEST_ROOT_DIR, 'fixtures/files/rails.png')
