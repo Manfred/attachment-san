@@ -14,6 +14,8 @@ rails = [
   end
 end
 
+raise "Couldn't find Rails directory!" unless rails
+
 frameworks.each { |framework| $:.unshift(File.join(rails, framework, 'lib')) }
 $:.unshift File.join(TEST_ROOT_DIR, '/../lib')
 $:.unshift File.join(TEST_ROOT_DIR, '/lib')
@@ -29,7 +31,7 @@ rescue LoadError
   raise "Please install Attachment-San as Rails plugin before running the tests."
 end
 
-require 'init'
+require File.expand_path('../../init', __FILE__)
 
 # Libraries for testing
 require 'rubygems' rescue LoadError

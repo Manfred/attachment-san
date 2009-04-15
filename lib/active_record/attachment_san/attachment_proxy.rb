@@ -55,6 +55,10 @@ module ActiveRecord :nodoc
         convert([[:resize, dimensions]], output_path)
       end
       
+      def crop_to(dimensions, output_path)
+        convert([[:resize, "#{dimensions}^"], [:gravity, :center], [:crop, "#{dimensions}+0+0"]], output_path)
+      end
+      
       def convert(operations, output_path)
         FileUtils.mkdir_p(File.dirname(output_path))
         execute "#{self.class.convert_command} '#{uploaded_file.path}' #{ operations.map { |op, arg| "-#{op} #{arg}" }.join(' ') } '#{output_path}'"

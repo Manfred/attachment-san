@@ -15,14 +15,18 @@ describe "AttachmentProxy" do
   end
 end
 
-describe "An AttachmentProxy" do
+shared "AttachmentProxy spec helper" do
   before do
     @rails_icon = File.join(TEST_ROOT_DIR, 'fixtures/files/rails.png')
     ActiveRecord::AttachmentSan::AttachmentProxy.stubs(:webroot).returns(File.join(Dir.tmpdir, 'assets'))
-    
+
     @attachment = Attachment.create :uploaded_data => rails_icon
     @proxy = @attachment.attachment
   end
+end
+
+describe "An AttachmentProxy" do
+  behaves_like "AttachmentProxy spec helper"
   
   it "should use the path on the model as its path if it exists" do
     path = ['path', 'to', 'file']
@@ -60,10 +64,15 @@ describe "An AttachmentProxy" do
     @proxy.write_to_webroot
     File.should.exist(@proxy.filename)
   end
+end
+
+describe "An AttachmentProxy, concerning image manipulation" do
+  behaves_like "AttachmentProxy spec helper"
   
   it "should fit images within certain dimensions" do
     filename = File.join(@proxy.filepath, 'rails-80-80.png')
     @proxy.fit_within("8x8", filename)
+    
     File.should.exist(filename)
     `file #{filename}`.should.include('6 x 8')
   end
@@ -75,5 +84,22 @@ describe "An AttachmentProxy" do
     
     @command.should.include(filename)
     @command.should.include('-resize 8x8')
+  end
+  
+  it "should crop images to certain dimensions" do
+    filename = File.join(@proxy.filepath, 'rails-80-80.png')
+    @proxy.crop_to('8x8', filename)
+    
+    File.should.exist(filename)
+    `file #{filename}`.should.include('8 x 8')
+  end
+  
+  it "should issue the correct convert command when cropping images to certain dimensions" do
+    filename = File.join(@proxy.filepath, 'rails-80-80.png')
+    @command = ''; @proxy.stubs(:execute).with { |command| @command = command }
+    @proxy.crop_to("8x8", filename)
+    
+    convert_command = ActiveRecord::AttachmentSan::AttachmentProxy.convert_command
+    @command.should == "#{convert_command} '#{@proxy.uploaded_file.path}' -resize 8x8^ -gravity center -crop 8x8+0+0 '#{filename}'"
   end
 end
