@@ -5,8 +5,17 @@ describe "AttachmentProxy" do
     ActiveRecord::AttachmentSan::AttachmentProxy.class_eval { @convert_command = nil }
   end
   
-  it "should find convert from ImageMagick on the system (fails when ImageMagick isn't installed)" do
+  it "should find the convert command from ImageMagick on the system (fails when ImageMagick isn't installed)" do
     ActiveRecord::AttachmentSan::AttachmentProxy.convert_command.should.end_with('convert')
+  end
+  
+  it "should raise an exception when it can't find the convert utility included with ImageMagick" do
+    ActiveRecord::AttachmentSan.stubs(:bin_paths).returns(%w(/a /b))
+    begin
+      ActiveRecord::AttachmentSan::AttachmentProxy.convert_command
+    rescue ActiveRecord::AttachmentSan::AttachmentProcessingError => e
+      e.message.should == "Can't find `convert' from ImageMagick in: /a and /b, please make sure it's installed"
+    end
   end
   
   it "should accept options when initialized" do
@@ -15,7 +24,7 @@ describe "AttachmentProxy" do
   end
 end
 
-shared "AttachmentProxy spec helper" do
+describe_shared "AttachmentProxy spec helper" do
   before do
     @rails_icon = File.join(TEST_ROOT_DIR, 'fixtures/files/rails.png')
     ActiveRecord::AttachmentSan::AttachmentProxy.stubs(:webroot).returns(File.join(Dir.tmpdir, 'assets'))

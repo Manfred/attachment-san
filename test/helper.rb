@@ -36,13 +36,14 @@ require File.expand_path('../../init', __FILE__)
 # Libraries for testing
 require 'rubygems' rescue LoadError
 require 'sqlite3'
+require 'test/spec'
 require 'mocha'
-require 'bacon'
 require 'fileutils'
 
 logdir = File.join(TEST_ROOT_DIR, 'log')
 FileUtils.mkdir_p(logdir)
 ActiveRecord::Base.logger = Logger.new File.join(logdir, 'test.log')
+
 dbdir = File.join(TEST_ROOT_DIR, 'db')
 FileUtils.mkdir_p(dbdir)
 ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :dbfile => File.join(dbdir, 'test.db'))

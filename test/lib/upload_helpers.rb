@@ -44,4 +44,4 @@ module AttachmentSan
   end
 end
 
-Bacon::Context.send(:include, AttachmentSan::UploadHelpers)
+Test::Spec::TestCase::InstanceMethods.send(:include, AttachmentSan::UploadHelpers)

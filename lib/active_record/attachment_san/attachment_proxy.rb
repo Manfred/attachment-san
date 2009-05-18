@@ -6,6 +6,10 @@ module ActiveRecord :nodoc
   module AttachmentSan
     class AttachmentProcessingError < StandardError; end
     
+    def self.bin_paths
+      %w(/opt/local/bin /usr/local/bin /usr/bin /opt/imagemagick/bin)
+    end
+    
     class AttachmentProxy
       attr_accessor :model, :options, :uploaded_file
       
@@ -85,12 +89,12 @@ module ActiveRecord :nodoc
       
       def self.convert_command
         if @convert_command.nil?
-          %w(/opt/local/bin /usr/local/bin /usr/bin /opt/imagemagick/bin).each do |path|
+          ActiveRecord::AttachmentSan.bin_paths.each do |path|
             if File.exist?(convert = File.join(path, 'convert'))
               return(@convert_command = convert)
             end
           end
-          raise AttachmentProcessingError, "Can't find `convert' from ImageMagick, please make sure it's installed"
+          raise AttachmentProcessingError, "Can't find `convert' from ImageMagick in: #{ActiveRecord::AttachmentSan.bin_paths.to_sentence}, please make sure it's installed"
         end
         @convert_command
       end
