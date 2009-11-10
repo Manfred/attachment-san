@@ -44,11 +44,9 @@ logdir = File.join(TEST_ROOT_DIR, 'log')
 FileUtils.mkdir_p(logdir)
 ActiveRecord::Base.logger = Logger.new File.join(logdir, 'test.log')
 
-dbdir = File.join(TEST_ROOT_DIR, 'db')
-FileUtils.mkdir_p(dbdir)
 ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :database => ":memory:")
 
 # Classes and methods to aid testing
 require 'schema'
-require 'attachments'
+require 'attachment'
 require 'upload_helpers'

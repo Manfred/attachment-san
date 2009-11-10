@@ -9,3 +9,9 @@
 #   def process_uploaded_file
 #   end
 # end
+
+class Attachment < ActiveRecord::Base
+  include AttachmentSan
+  
+  belongs_to :attachable, :polymorphic => true
+end

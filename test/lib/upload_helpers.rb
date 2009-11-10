@@ -39,7 +39,7 @@ module AttachmentSan
     end
     
     def rails_icon
-      uploaded_file(@rails_icon, 'image/png')
+      uploaded_file(File.join(TEST_ROOT_DIR, 'fixtures', 'files', 'rails.png'), 'image/png')
     end
   end
 end

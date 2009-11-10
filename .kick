@@ -1,0 +1,12 @@
+process do |files|
+  tests = files.take_and_map do |file|
+    case file
+    when /^test\/\w+_test\.rb$/
+      file
+    when /^lib\/.*?(\w+)\.rb$/
+      "test/#{$1}_test.rb"
+    end
+  end
+  
+  run_ruby_tests tests
+end
