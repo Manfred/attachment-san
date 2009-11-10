@@ -5,4 +5,5 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string :filename
     t.string :content_type
   end
+
 end

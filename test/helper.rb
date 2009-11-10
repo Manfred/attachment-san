@@ -31,7 +31,7 @@ rescue LoadError
   raise "Please install Attachment-San as Rails plugin before running the tests."
 end
 
-require File.expand_path('../../init', __FILE__)
+require File.expand_path('../../rails/init', __FILE__)
 
 # Libraries for testing
 require 'rubygems' rescue LoadError
@@ -46,7 +46,7 @@ ActiveRecord::Base.logger = Logger.new File.join(logdir, 'test.log')
 
 dbdir = File.join(TEST_ROOT_DIR, 'db')
 FileUtils.mkdir_p(dbdir)
-ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :dbfile => File.join(dbdir, 'test.db'))
+ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :database => ":memory:")
 
 # Classes and methods to aid testing
 require 'schema'
