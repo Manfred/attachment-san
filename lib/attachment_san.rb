@@ -3,7 +3,7 @@ require "attachment_san/variant"
 
 module AttachmentSan
   def self.included(model)
-    model.extend VariantClassMethods
+    model.extend VariantModelClassMethods
     
     model.class_inheritable_accessor :base_path
     model.define_callbacks :before_upload, :after_upload

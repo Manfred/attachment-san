@@ -1,5 +1,5 @@
 module AttachmentSan
-  module VariantClassMethods
+  module VariantModelClassMethods
     def self.extended(model)
       model.class_inheritable_accessor :variant_reflections
       model.variant_reflections = []
@@ -11,7 +11,7 @@ module AttachmentSan
       variant_reflections << Variant::Reflection.new(label, options)
       
       # def original
-      #   @original ||= AttachmentSan::Variant.new(self, :original)
+      #   @original ||= self.class.reflect_on_variant(:original).klass.new(self, :original)
       # end
       class_eval <<-DEF, __FILE__, __LINE__ + 1
         def #{label}
