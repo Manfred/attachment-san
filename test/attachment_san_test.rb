@@ -1,17 +1,5 @@
 require File.expand_path('../test_helper', __FILE__)
 
-# class Document < ActiveRecord::Base
-#   attachment_san :keep_filename => true
-# end
-# 
-# class Drawing < Document
-#   attachment_san :accept => Mime::PNG
-# end
-# 
-# class DrawingThumbnail < Document
-#   attachment_san :accept => Mime::PNG, :keep_filename => false
-# end
-
 class Attachment < ActiveRecord::Base
   attr_accessor :file_before_upload
   before_upload { |record| record.file_before_upload = record.uploaded_file }
@@ -45,5 +33,13 @@ describe "AttachmentSan, instance methods" do
   
   it "should make a model accept a file upload" do
     @attachment.uploaded_file.should.be @upload
+  end
+  
+  it "should assign the original filename to the model" do
+    @attachment.filename.should == @upload.original_filename
+  end
+  
+  it "should assign the content type to the model" do
+    @attachment.content_type.should == @upload.content_type
   end
 end
