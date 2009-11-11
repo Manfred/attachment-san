@@ -16,8 +16,8 @@ module AttachmentSan
       options[:variants] ||= {}
       model = create_model(name)
       
-      options[:variants].each do |label, options|
-        model.define_variant(label)
+      options[:variants].each do |label, variant_options|
+        model.define_variant(label, variant_options)
       end
     end
     

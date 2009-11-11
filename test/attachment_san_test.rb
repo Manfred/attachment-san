@@ -26,12 +26,9 @@ describe "AttachmentSan, class methods" do
     @attachment.file_after_upload.should.be @upload
   end
   
-  it "should define a variant" do
-    Attachment.define_variant 'foo_bar'
-    Attachment.variant_labels.should == [:original, :foo_bar]
-    
-    @attachment.foo_bar.label.should == :foo_bar
-    @attachment.foo_bar.should.be.instance_of AttachmentSan::Variant
+  it "should define a variant with options" do
+    Logo.variant_reflections.map(&:label).should == [:original, :header]
+    Logo.new.header.should.be.instance_of MyVariant
   end
 end
 

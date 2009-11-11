@@ -1,5 +1,24 @@
 require File.expand_path('../test_helper', __FILE__)
 
+describe "AttachmentSan::VariantReflection" do
+  before do
+    @reflection = Logo.reflect_on_variant(:header)
+  end
+  
+  it "should return the class name of the variant class to use" do
+    @reflection.class_name.should == 'MyVariant'
+  end
+  
+  it "should return the variant class to use" do
+    @reflection.klass.should == MyVariant
+  end
+  
+  it "should by default use the AttachmentSan::Variant class" do
+    reflection = AttachmentSan::Variant::Reflection.new(:default, {})
+    reflection.klass.should.be AttachmentSan::Variant
+  end
+end
+
 describe "AttachmentSan::Variant, concerning a default variant" do
   before do
     Attachment.reset!
@@ -7,6 +26,10 @@ describe "AttachmentSan::Variant, concerning a default variant" do
     @upload = rails_icon
     @document = Document.new
     @document.build_watermark :uploaded_file => @upload
+  end
+  
+  it "should use a custom variant for an `original'" do
+    @document.watermark.original.should.be.instance_of AttachmentSan::Variant::Original
   end
   
   it "should return the record it is a variant of" do
