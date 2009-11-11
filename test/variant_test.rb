@@ -21,8 +21,6 @@ end
 
 describe "AttachmentSan::Variant, concerning a default variant" do
   before do
-    Attachment.reset!
-    
     @upload = rails_icon
     @document = Document.new
     @document.build_watermark :uploaded_file => @upload
@@ -41,11 +39,27 @@ describe "AttachmentSan::Variant, concerning a default variant" do
   end
   
   it "should simply copy the file to the file_path" do
+    Attachment.reset!
+    
     file_path = @document.watermark.original.file_path
     File.should.not.exist file_path
     @document.save!
     
     File.should.exist file_path
     File.read(file_path).should == File.read(@upload.path)
+  end
+end
+
+describe "A AttachmentSan::Variant instance" do
+  before do
+    @upload = rails_icon
+    @document = Document.new
+    @document.images.build :uploaded_file => @upload
+  end
+  
+  it "should call the :process option proc" do
+    variant = @document.images.first.thumbnail
+    MyProcessor.expects(:new).with(variant)
+    variant.process!
   end
 end

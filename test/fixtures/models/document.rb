@@ -1,5 +1,7 @@
 class MyVariant < AttachmentSan::Variant; end
 
+class MyProcessor; end
+
 class Document < ActiveRecord::Base
   extend AttachmentSan::Has
   
@@ -10,7 +12,7 @@ class Document < ActiveRecord::Base
   
   has_attachments :misc_files
   has_attachments :images, :variants => {
-    :thumbnail => {},
+    :thumbnail => { :process => proc { |v| MyProcessor.new(v) } },
     :medium => {},
     :download => {}
   }

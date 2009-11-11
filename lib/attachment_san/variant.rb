@@ -11,11 +11,17 @@ module AttachmentSan
       variant_reflections << Variant::Reflection.new(label, options)
       
       # def original
-      #   @original ||= self.class.reflect_on_variant(:original).klass.new(self, :original)
+      #   @original ||= begin
+      #     reflection = self.class.reflect_on_variant(:original)
+      #     reflection.klass.new(self, reflection)
+      #   end
       # end
       class_eval <<-DEF, __FILE__, __LINE__ + 1
         def #{label}
-          @#{label} ||= self.class.reflect_on_variant(:#{label}).klass.new(self, :#{label})
+          @#{label} ||= begin
+            reflection = self.class.reflect_on_variant(:#{label})
+            reflection.klass.new(self, reflection)
+          end
         end
       DEF
     end
@@ -43,10 +49,14 @@ module AttachmentSan
   end
   
   class Variant
-    attr_reader :record, :label
+    attr_reader :record, :reflection
     
-    def initialize(record, label)
-      @record, @label = record, label
+    def initialize(record, reflection)
+      @record, @reflection = record, reflection
+    end
+    
+    def label
+      @reflection.label
     end
     
     def file_path
@@ -54,6 +64,7 @@ module AttachmentSan
     end
     
     def process!
+      @reflection.options[:process].call(self)
     end
   end
   
