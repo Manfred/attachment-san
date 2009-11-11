@@ -1,5 +1,6 @@
 require "attachment_san/has"
 require "attachment_san/variant"
+require "attachment_san/replay"
 
 module AttachmentSan
   def self.included(model)
