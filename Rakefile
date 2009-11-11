@@ -1,13 +1,12 @@
 require 'rake/rdoctask'
+require 'rake/testtask'
 
-desc "Run all specs by default"
-task :default => :spec
+desc "Run all tests by default"
+task :default => :test
 
-desc "Run all specs"
-task :spec do
-  Dir[File.dirname(__FILE__) + '/test/**/*_spec.rb'].each do |file|
-    load file
-  end
+Rake::TestTask.new do |t|
+  t.test_files = FileList['test/**/*_test.rb']
+  t.verbose = true
 end
 
 namespace :gem do

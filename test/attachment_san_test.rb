@@ -1,17 +1,19 @@
 require File.expand_path('../test_helper', __FILE__)
 
-class Attachment < ActiveRecord::Base
-  attr_accessor :file_before_upload
-  before_upload { |record| record.file_before_upload = record.uploaded_file }
-  
-  attr_accessor :file_after_upload
-  after_upload  { |record| record.file_after_upload  = record.uploaded_file }
-end
-
 describe "AttachmentSan, class methods" do
   before do
     @upload = rails_icon
     @attachment = Attachment.new(:uploaded_file => @upload)
+  end
+  
+  it "should assign the base_path for where to store the variants" do
+    begin
+      Attachment.base_path.should == TMP_DIR
+      Attachment.base_path = '/some/base/path'
+      Attachment.base_path.should == '/some/base/path'
+    ensure
+      Attachment.base_path = TMP_DIR
+    end
   end
   
   it "should call a before_upload filter chain before actually assigning the new uploaded file" do
@@ -22,6 +24,14 @@ describe "AttachmentSan, class methods" do
   
   it "should call an after_upload filter chain after assigning the new uploaded file" do
     @attachment.file_after_upload.should.be @upload
+  end
+  
+  it "should define a variant" do
+    Attachment.define_variant 'foo_bar'
+    Attachment.variant_labels.should == [:original, :foo_bar]
+    
+    @attachment.foo_bar.label.should == :foo_bar
+    @attachment.foo_bar.should.be.instance_of AttachmentSan::Variant
   end
 end
 
@@ -41,5 +51,26 @@ describe "AttachmentSan, instance methods" do
   
   it "should assign the content type to the model" do
     @attachment.content_type.should == @upload.content_type
+  end
+end
+
+describe "An AttachmentSan instance, concerning variants" do
+  before do
+    @upload = rails_icon
+    @document = Document.new
+    @document.build_logo :uploaded_file => @upload
+    @document.build_watermark :uploaded_file => @upload
+  end
+  
+  it "should call process on each of it's variants" do
+    @document.watermark.original.expects(:process!)
+    @document.logo.original.expects(:process!)
+    @document.logo.header.expects(:process!)
+    @document.save!
+  end
+  
+  it "should return it's variants" do
+    @document.watermark.variants.map(&:label).should == [:original]
+    @document.logo.variants.map(&:label).should == [:original, :header]
   end
 end

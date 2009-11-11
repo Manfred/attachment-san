@@ -18,7 +18,7 @@ raise "Couldn't find Rails directory!" unless rails
 
 frameworks.each { |framework| $:.unshift(File.join(rails, framework, 'lib')) }
 $:.unshift File.join(TEST_ROOT_DIR, '/../lib')
-$:.unshift File.join(TEST_ROOT_DIR, '/lib')
+$:.unshift TEST_ROOT_DIR
 
 ENV['RAILS_ENV'] = 'test'
 
@@ -43,10 +43,13 @@ require 'fileutils'
 logdir = File.join(TEST_ROOT_DIR, 'log')
 FileUtils.mkdir_p(logdir)
 ActiveRecord::Base.logger = Logger.new File.join(logdir, 'test.log')
-
 ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :database => ":memory:")
 
+TMP_DIR = File.join(TEST_ROOT_DIR, 'tmp')
+
 # Classes and methods to aid testing
-require 'schema'
-require 'attachment'
-require 'upload_helpers'
+require 'lib/schema'
+require 'lib/upload_helpers'
+
+require 'fixtures/models/attachment'
+require 'fixtures/models/document'

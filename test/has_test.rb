@@ -1,19 +1,5 @@
 require File.expand_path('../test_helper', __FILE__)
 
-class Document < ActiveRecord::Base
-  extend AttachmentSan::Has
-  
-  has_attachment  :watermark
-  has_attachment  :logo, :variants => { :header => {} }
-  
-  has_attachments :misc_files
-  has_attachments :images, :variants => {
-    :thumbnail => {},
-    :medium => {},
-    :download => {}
-  }
-end
-
 describe "AttachmentSan::Has, concerning a single associated attachment" do
   before do
     @document = Document.new
@@ -25,6 +11,11 @@ describe "AttachmentSan::Has, concerning a single associated attachment" do
     reflection = Document.reflect_on_association(:logo)
     reflection.macro.should == :has_one
     reflection.klass.should == Logo
+  end
+  
+  it "should store the variant options on the new model class" do
+    Watermark.variant_labels.should == [:original]
+    Logo.variant_labels.should == [:original, :header]
   end
   
   it "should define only a default original variant if no others are given" do

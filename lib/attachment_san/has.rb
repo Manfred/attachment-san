@@ -14,14 +14,10 @@ module AttachmentSan
     
     def define_variants(name, options)
       options[:variants] ||= {}
-      options[:variants][:original] = {}
+      model = create_model(name)
       
-      create_model(name) do
-        options[:variants].each do |variant, options|
-          define_method variant do
-            AttachmentSan::Variant.new(variant)
-          end
-        end
+      options[:variants].each do |label, options|
+        model.define_variant(label)
       end
     end
     
