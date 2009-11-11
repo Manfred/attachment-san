@@ -13,14 +13,17 @@ module AttachmentSan
     private
     
     def define_variants(name, options)
-      options[:variants] ||= {}
       model = create_model(name)
       
-      options[:variants].each do |label, variant_options|
-        model.define_variant(label, variant_options)
+      if variants = options[:variants]
+        variants.each do |label, variant_options|
+          model.define_variant(label, variant_options)
+        end
       end
     end
     
+    # TODO: Currently creates these classes in the top level namespace and
+    # assumes the class does not exist yet.
     def create_model(name, &block)
       ::Object.const_set name.to_s.classify, Class.new(Attachment, &block)
     end
