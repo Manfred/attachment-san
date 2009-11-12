@@ -1,3 +1,5 @@
+require "digest"
+
 module AttachmentSan
   module VariantModelClassMethods
     def self.extended(model)
@@ -48,12 +50,31 @@ module AttachmentSan
       @record, @reflection = record, reflection
     end
     
+    def base_options
+      @record.class.attachment_san_options
+    end
+    
     def name
       @reflection[:name]
     end
     
+    # TODO: Move into attachment_san_options
+    def base_path
+      @record.class.base_path
+    end
+    
+    def filename
+      case base_options[:filename_scheme]
+      when :variant_name
+        name.to_s
+      when :hashed
+        hash = Digest::SHA1.hexdigest("#{name}+#{@record.filename}")
+        [hash[0..1], hash[2..3], hash[4..5], hash[6..-1]].join('/')
+      end
+    end
+    
     def file_path
-      File.join(@record.class.base_path, @record.filename)
+      File.join(base_path, @record.filename)
     end
     
     def process!

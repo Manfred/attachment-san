@@ -2,12 +2,20 @@ require "attachment_san/has"
 require "attachment_san/variant"
 
 module AttachmentSan
+  module Initializer
+    def attachment_san(options = {})
+      include AttachmentSan
+      self.attachment_san_options = { :filename_scheme => :variant_name }.merge(options)
+    end
+  end
+  
   mattr_accessor :attachment_class
   
   def self.included(model)
     self.attachment_class = model
     model.extend VariantModelClassMethods
-    model.class_inheritable_accessor :base_path
+    
+    model.class_inheritable_accessor :base_path, :attachment_san_options
     model.define_callbacks :before_upload, :after_upload
     model.after_save :process_variants!
   end

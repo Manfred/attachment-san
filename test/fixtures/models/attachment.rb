@@ -1,5 +1,5 @@
 class Attachment < ActiveRecord::Base
-  include AttachmentSan
+  attachment_san
   
   # Test code
   

@@ -11,7 +11,7 @@ class Document < ActiveRecord::Base
   has_attachments :misc_files
   has_attachments :images, :variants => {
     :thumbnail => proc { |v| MyProcessor.new(v) },
-    :medium => proc {},
+    :medium_sized => proc {},
     :download => proc {}
   }
 end
