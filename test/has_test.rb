@@ -11,6 +11,7 @@ describe "AttachmentSan::Has, concerning a single associated attachment" do
     reflection = Document.reflect_on_association(:logo)
     reflection.macro.should == :has_one
     reflection.klass.should == Logo
+    Logo.superclass.should.be AttachmentSan.attachment_class
   end
   
   it "should store the variant options on the new model class" do

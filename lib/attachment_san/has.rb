@@ -23,8 +23,8 @@ module AttachmentSan
     
     # TODO: Currently creates these classes in the top level namespace and
     # assumes the class does not exist yet.
-    def create_model(name, &block)
-      ::Object.const_set name.to_s.classify, Class.new(Attachment, &block)
+    def create_model(name)
+      ::Object.const_set name.to_s.classify, Class.new(AttachmentSan.attachment_class)
     end
   end
 end

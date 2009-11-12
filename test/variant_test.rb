@@ -1,6 +1,6 @@
 require File.expand_path('../test_helper', __FILE__)
 
-describe "AttachmentSan::VariantReflection" do
+describe "AttachmentSan's variant reflection" do
   it "should return the variant class to use" do
     reflection = Logo.reflect_on_variant(:header)
     reflection[:class].should.be MyVariant

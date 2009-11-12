@@ -6,6 +6,10 @@ describe "AttachmentSan, class methods" do
     @attachment = Attachment.new(:uploaded_file => @upload)
   end
   
+  it "should assign the base attachment class" do
+    AttachmentSan.attachment_class.should.be Attachment
+  end
+  
   it "should assign the base_path for where to store the variants" do
     begin
       Attachment.base_path.should == TMP_DIR
