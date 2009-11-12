@@ -70,6 +70,9 @@ module AttachmentSan
       when :hashed
         hash = Digest::SHA1.hexdigest("#{name}+#{@record.filename}")
         [hash[0..1], hash[2..3], hash[4..5], hash[6..-1]].join('/')
+      else
+        current = base_options[:filename_scheme].inspect
+        raise ArgumentError, "The :filename_scheme option should be one of `:variant_name' or `:hashed', it currently is `#{current}'."
       end
     end
     

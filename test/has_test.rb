@@ -59,7 +59,7 @@ describe "AttachmentSan::Has, concerning a collection of associated attachments"
   end
   
   it "should define a default original variant and the ones specified" do
-    %w{ original thumbnail medium download }.each do |name|
+    %w{ original thumbnail medium_sized download }.each do |name|
       variants = @document.images.map(&name.to_sym)
       variants.should.all { |v| v.name == name }
       variants.should.all { |v| v.instance_of? AttachmentSan::Variant }
