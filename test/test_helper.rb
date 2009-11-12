@@ -31,6 +31,13 @@ rescue LoadError
   raise "Please install Attachment-San as Rails plugin before running the tests."
 end
 
+require "pathname"
+module Rails
+  def self.root
+    Pathname.new('/path/to/app')
+  end
+end
+
 require File.expand_path('../../rails/init', __FILE__)
 
 # Libraries for testing
@@ -53,3 +60,4 @@ require 'lib/upload_helpers'
 
 require 'fixtures/models/attachment'
 require 'fixtures/models/document'
+require 'fixtures/models/options_stub'

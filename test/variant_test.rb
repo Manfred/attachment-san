@@ -31,12 +31,22 @@ describe "A AttachmentSan::Variant instance in general" do
     @thumbnail.process!
   end
   
-  it "should return the record's class base_path" do
-    @thumbnail.base_path.should == AttachmentSan.attachment_class.base_path
+  it "should return the base_path specified in the attachment_san_options" do
+    @thumbnail.base_path.should == Attachment.attachment_san_options[:base_path]
     
     @thumbnail.stubs(:base_path).returns('/another/path/yo')
-    @thumbnail.base_path.should.not == AttachmentSan.attachment_class.base_path
+    @thumbnail.base_path.should.not == Attachment.attachment_san_options[:base_path]
     @thumbnail.base_path.should == '/another/path/yo'
+  end
+  
+  it "should return the extension of the original file" do
+    Image.attachment_san_options[:extension] = :original_file
+    @thumbnail.extension.should == 'png'
+  end
+  
+  it "should use the extension specified in the attachment_san_options" do
+    Image.attachment_san_options[:extension] = :jpeg
+    @thumbnail.extension.should == 'jpeg'
   end
   
   it "should return a filename named after the variant name" do

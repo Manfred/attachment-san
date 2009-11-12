@@ -1,23 +1,47 @@
 require File.expand_path('../test_helper', __FILE__)
 
+describe "AttachmentSan, concerning base options" do
+  default = OptionsStub.new_subclass do
+    attachment_san
+  end
+  
+  specified = OptionsStub.new_subclass do
+    attachment_san :base_path => '/some/base/path', :extension => :png, :filename_scheme => :hashed
+  end
+  
+  it "should default the base_path to public/images" do
+    default.attachment_san_options[:base_path].should == Rails.root + 'public/images'
+  end
+  
+  it "should use the specified base_path" do
+    specified.attachment_san_options[:base_path].should == '/some/base/path'
+  end
+  
+  it "should default to use the variant's name as the filename for variants" do
+    default.attachment_san_options[:filename_scheme].should == :variant_name
+  end
+  
+  it "should use the specified file extension for variants" do
+    specified.attachment_san_options[:filename_scheme].should == :hashed
+  end
+  
+  it "should default to use the original file's extension for variants" do
+    default.attachment_san_options[:extension].should == :original_file
+  end
+  
+  it "should use the specified file extension for variants" do
+    specified.attachment_san_options[:extension].should == :png
+  end
+end
+
 describe "AttachmentSan, class methods" do
   before do
     @upload = rails_icon
     @attachment = Attachment.new(:uploaded_file => @upload)
   end
   
-  it "should assign the base attachment class" do
+  it "should assign the base attachment class when attachment_san is called" do
     AttachmentSan.attachment_class.should.be Attachment
-  end
-  
-  it "should assign the base_path for where to store the variants" do
-    begin
-      Attachment.base_path.should == TMP_DIR
-      Attachment.base_path = '/some/base/path'
-      Attachment.base_path.should == '/some/base/path'
-    ensure
-      Attachment.base_path = TMP_DIR
-    end
   end
   
   it "should call a before_upload filter chain before actually assigning the new uploaded file" do
@@ -52,6 +76,10 @@ describe "AttachmentSan, instance methods" do
   
   it "should assign the content type to the model" do
     @attachment.content_type.should == @upload.content_type
+  end
+  
+  it "should return the original file's extension" do
+    @attachment.extension.should == 'png'
   end
 end
 

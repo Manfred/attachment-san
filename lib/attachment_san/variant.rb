@@ -54,25 +54,32 @@ module AttachmentSan
       @record.class.attachment_san_options
     end
     
+    def base_path
+      base_options[:base_path]
+    end
+    
     def name
       @reflection[:name]
     end
     
-    # TODO: Move into attachment_san_options
-    def base_path
-      @record.class.base_path
+    def extension
+      case ext = base_options[:extension]
+      when :original_file
+        @record.extension
+      else
+        ext.to_s
+      end
     end
     
     def filename
-      case base_options[:filename_scheme]
+      case scheme = base_options[:filename_scheme]
       when :variant_name
         name.to_s
       when :hashed
         hash = Digest::SHA1.hexdigest("#{name}+#{@record.filename}")
         [hash[0..1], hash[2..3], hash[4..5], hash[6..-1]].join('/')
       else
-        current = base_options[:filename_scheme].inspect
-        raise ArgumentError, "The :filename_scheme option should be one of `:variant_name' or `:hashed', it currently is `#{current}'."
+        raise ArgumentError, "The :filename_scheme option should be one of `:variant_name' or `:hashed', it currently is `#{scheme.inspect}'."
       end
     end
     

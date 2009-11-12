@@ -1,5 +1,5 @@
 class Attachment < ActiveRecord::Base
-  attachment_san
+  attachment_san :base_path => TMP_DIR
   
   # Test code
   
@@ -7,8 +7,6 @@ class Attachment < ActiveRecord::Base
     FileUtils.rm_rf TMP_DIR
     FileUtils.mkdir_p TMP_DIR
   end
-  
-  self.base_path = TMP_DIR
   
   # User code
   
