@@ -23,7 +23,7 @@ module AttachmentSan
   end
   
   def variants
-    self.class.variant_reflections.map { |reflection| send(reflection[:label]) }
+    self.class.variant_reflections.map { |reflection| send(reflection[:name]) }
   end
   
   def process_variants!

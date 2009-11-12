@@ -15,24 +15,24 @@ describe "AttachmentSan::Has, concerning a single associated attachment" do
   
   it "should store the variant options on the new model class" do
     Watermark.variant_reflections.length.should == 1
-    Watermark.variant_reflections.first[:label].should == :original
+    Watermark.variant_reflections.first[:name].should == :original
     Watermark.variant_reflections.first[:class].should == AttachmentSan::Variant::Original
     
     Logo.variant_reflections.length.should == 2
-    Logo.variant_reflections.last[:label].should == :header
+    Logo.variant_reflections.last[:name].should == :header
     Logo.variant_reflections.last[:class].should == MyVariant
   end
   
   it "should define only a default original variant if no other variants are given" do
     variant = @document.watermark.original
-    variant.label.should == :original
+    variant.name.should == :original
     variant.should.be.instance_of AttachmentSan::Variant::Original
   end
   
   it "should define a default original variant and the ones specified" do
     %w{ original header }.each do |name|
       variant = @document.logo.send(name)
-      variant.label.to_s.should == name
+      variant.name.to_s.should == name
       variant.should.be.instance_of Logo.reflect_on_variant(name)[:class]
     end
   end
@@ -53,14 +53,14 @@ describe "AttachmentSan::Has, concerning a collection of associated attachments"
   
   it "should define only a default original variant if no others are given" do
     variants = @document.misc_files.map(&:original)
-    variants.should.all { |v| v.label == :original }
+    variants.should.all { |v| v.name == :original }
     variants.should.all { |v| v.instance_of? AttachmentSan::Variant }
   end
   
   it "should define a default original variant and the ones specified" do
     %w{ original thumbnail medium download }.each do |name|
       variants = @document.images.map(&name.to_sym)
-      variants.should.all { |v| v.label == name }
+      variants.should.all { |v| v.name == name }
       variants.should.all { |v| v.instance_of? AttachmentSan::Variant }
     end
   end

@@ -6,9 +6,9 @@ module AttachmentSan
       model.define_variant :original, Variant::Original
     end
     
-    def define_variant(label, variant_class_or_process_proc)
-      label = label.to_sym
-      variant_reflections << (reflection = { :label => label })
+    def define_variant(name, variant_class_or_process_proc)
+      name = name.to_sym
+      variant_reflections << (reflection = { :name => name })
       
       case x = variant_class_or_process_proc
       when Class
@@ -27,17 +27,17 @@ module AttachmentSan
       #   end
       # end
       class_eval <<-DEF, __FILE__, __LINE__ + 1
-        def #{label}
-          @#{label} ||= begin
-            reflection = self.class.reflect_on_variant(:#{label})
+        def #{name}
+          @#{name} ||= begin
+            reflection = self.class.reflect_on_variant(:#{name})
             reflection[:class].new(self, reflection)
           end
         end
       DEF
     end
     
-    def reflect_on_variant(label)
-      variant_reflections.find { |r| r[:label] == label.to_sym }
+    def reflect_on_variant(name)
+      variant_reflections.find { |r| r[:name] == name.to_sym }
     end
   end
   
@@ -48,8 +48,8 @@ module AttachmentSan
       @record, @reflection = record, reflection
     end
     
-    def label
-      @reflection[:label]
+    def name
+      @reflection[:name]
     end
     
     def file_path
