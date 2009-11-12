@@ -72,15 +72,17 @@ module AttachmentSan
     end
     
     def filename
-      case scheme = base_options[:filename_scheme]
-      when :variant_name
-        name.to_s
-      when :hashed
-        hash = Digest::SHA1.hexdigest("#{name}+#{@record.filename}")
-        [hash[0..1], hash[2..3], hash[4..5], hash[6..-1]].join('/')
-      else
-        raise ArgumentError, "The :filename_scheme option should be one of `:variant_name' or `:hashed', it currently is `#{scheme.inspect}'."
-      end
+      filename =
+        case scheme = base_options[:filename_scheme]
+        when :variant_name
+          name.to_s
+        when :hashed
+          Digest::SHA1.hexdigest("#{name}+#{@record.filename}").scan(/.{2}/).join('/')
+        else
+          raise ArgumentError,
+            "The :filename_scheme option should be one of `:variant_name' or `:hashed', it currently is `#{scheme.inspect}'."
+        end
+      "#{filename}.#{extension}"
     end
     
     def file_path

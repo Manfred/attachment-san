@@ -49,16 +49,25 @@ describe "A AttachmentSan::Variant instance in general" do
     @thumbnail.extension.should == 'jpeg'
   end
   
-  it "should return a filename named after the variant name" do
+  it "should return a filename named after the variant name plus the extension" do
     Image.attachment_san_options[:filename_scheme] = :variant_name
-    @thumbnail.filename.should == 'thumbnail'
-    @medium_sized.filename.should == 'medium_sized'
+    
+    { :original_file => 'png', :jpg => 'jpg' }.each do |setting, ext|
+      Image.attachment_san_options[:extension] = setting
+      @thumbnail.filename.should == "thumbnail.#{ext}"
+      @medium_sized.filename.should == "medium_sized.#{ext}"
+    end
   end
   
-  it "should return a filename which is a hashed version of the variant name plus original filename" do
+  it "should return a filename which is a hashed version of the variant name plus original filename and append the extension" do
     Image.attachment_san_options[:filename_scheme] = :hashed
-    @thumbnail.filename.should == '55/6d/2e/8e8b5e60159d3fd9a894e30826e2d6fc1c'
-    @medium_sized.filename.should == 'd4/67/c8/41c2c9230e945b0cf1218652cfc5a24118'
+    
+    { :original_file => 'png', :jpg => 'jpg' }.each do |setting, ext|
+      Image.attachment_san_options[:extension] = setting
+      
+      @thumbnail.filename.should == "55/6d/2e/8e/8b/5e/60/15/9d/3f/d9/a8/94/e3/08/26/e2/d6/fc/1c.#{ext}"
+      @medium_sized.filename.should == "d4/67/c8/41/c2/c9/23/0e/94/5b/0c/f1/21/86/52/cf/c5/a2/41/18.#{ext}"
+    end
   end
 end
 
