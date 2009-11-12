@@ -14,10 +14,9 @@ module AttachmentSan
     
     def define_variants(name, options)
       model = create_model(name)
-      
       if variants = options[:variants]
-        variants.each do |label, variant_options|
-          model.define_variant(label, variant_options)
+        variants.each do |label, class_or_proc|
+          model.define_variant(label, class_or_proc)
         end
       end
     end

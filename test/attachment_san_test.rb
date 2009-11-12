@@ -27,7 +27,7 @@ describe "AttachmentSan, class methods" do
   end
   
   it "should define a variant with options" do
-    Logo.variant_reflections.map(&:label).should == [:original, :header]
+    Logo.variant_reflections.map { |r| r[:label] }.should == [:original, :header]
     Logo.new.header.should.be.instance_of MyVariant
   end
 end

@@ -3,12 +3,22 @@ module AttachmentSan
     def self.extended(model)
       model.class_inheritable_accessor :variant_reflections
       model.variant_reflections = []
-      model.define_variant :original, :klass => Variant::Original
+      model.define_variant :original, Variant::Original
     end
     
-    def define_variant(label, options = {})
+    def define_variant(label, variant_class_or_process_proc)
       label = label.to_sym
-      variant_reflections << Variant::Reflection.new(label, options)
+      variant_reflections << (reflection = { :label => label })
+      
+      case x = variant_class_or_process_proc
+      when Class
+        reflection[:class] = x
+      when Proc
+        reflection[:class] = Variant
+        reflection[:process] = x
+      else
+        raise TypeError, "Please specify a variant class or process proc. Can't use `#{x.inspect}'."
+      end
       
       # def original
       #   @original ||= begin
@@ -20,31 +30,14 @@ module AttachmentSan
         def #{label}
           @#{label} ||= begin
             reflection = self.class.reflect_on_variant(:#{label})
-            reflection.klass.new(self, reflection)
+            reflection[:class].new(self, reflection)
           end
         end
       DEF
     end
     
     def reflect_on_variant(label)
-      variant_reflections.find { |r| r.label == label.to_sym }
-    end
-  end
-  
-  class Variant
-    class Reflection
-      attr_reader :label, :options
-      def initialize(label, options)
-        @label, @options = label, options
-      end
-      
-      def class_name
-        @options[:class_name]
-      end
-      
-      def klass
-        @options[:klass] ||= class_name.try(:constantize) || AttachmentSan::Variant
-      end
+      variant_reflections.find { |r| r[:label] == label.to_sym }
     end
   end
   
@@ -56,7 +49,7 @@ module AttachmentSan
     end
     
     def label
-      @reflection.label
+      @reflection[:label]
     end
     
     def file_path
@@ -64,11 +57,9 @@ module AttachmentSan
     end
     
     def process!
-      @reflection.options[:process].call(self)
+      @reflection[:process].call(self)
     end
-  end
-  
-  class Variant
+    
     class Original < Variant
       def process!
         File.open(file_path, 'w') { |f| f.write @record.uploaded_file.read }
