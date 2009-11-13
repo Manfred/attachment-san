@@ -1,3 +1,6 @@
 * Make it actually work with more than one attachment class.
-* Shorten tokens for hashed variants.
+  * has_attachment :watermark, :superclass => WatermarkSuperclass
+  * has_attachment :watermark, :class => WatermarkClass
+* Nest created classes under the superclass.
+* Shorten tokens for hashed variants and make them random.
 * Do we need to sanitize the original filename, eg lowercase.
