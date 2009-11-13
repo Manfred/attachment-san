@@ -5,16 +5,32 @@ describe "AttachmentSan, concerning base options" do
     attachment_san
   end
   
-  specified = OptionsStub.new_subclass do
-    attachment_san :base_path => '/some/base/path', :extension => :png, :filename_scheme => :hashed
+  default_with_public_path = OptionsStub.new_subclass do
+    attachment_san :public_base_path => '/files/assets'
   end
   
-  it "should default the base_path to public" do
-    default.attachment_san_options[:base_path].should == Rails.root + 'public'
+  specified = OptionsStub.new_subclass do
+    attachment_san :base_path => '/some/base/path', :public_base_path => '/files/assets', :extension => :png, :filename_scheme => :hashed
+  end
+  
+  it "should default the base_path to `public'" do
+    default.attachment_san_options[:base_path].should == Rails.root + 'public/'
   end
   
   it "should use the specified base_path" do
     specified.attachment_san_options[:base_path].should == '/some/base/path'
+  end
+  
+  it "should default the public_base_path to an empty string" do
+    default.attachment_san_options[:public_base_path].should == ''
+  end
+  
+  it "should use the specified public_base_path" do
+    specified.attachment_san_options[:public_base_path].should == '/files/assets'
+  end
+  
+  it "should default the base_path to `public' + public_base_path" do
+    default_with_public_path.attachment_san_options[:base_path].should == Rails.root + 'public/files/assets'
   end
   
   it "should default to use the variant's name as the filename for variants" do

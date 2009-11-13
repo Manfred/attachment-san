@@ -1,5 +1,5 @@
 class Attachment < ActiveRecord::Base
-  attachment_san :base_path => TMP_DIR
+  attachment_san :base_path => TMP_DIR, :public_base_path => '/files/assets'
   
   # Test code
   

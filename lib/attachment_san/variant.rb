@@ -61,6 +61,10 @@ module AttachmentSan
       base_options[:base_path]
     end
     
+    def public_base_path
+      base_options[:public_base_path]
+    end
+    
     def original
       @record.original
     end
@@ -96,6 +100,10 @@ module AttachmentSan
     
     def file_path
       File.join(base_path, filename)
+    end
+    
+    def public_path
+      File.join(public_base_path, filename)
     end
     
     def dir_path

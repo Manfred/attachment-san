@@ -6,11 +6,14 @@ module AttachmentSan
     def attachment_san(options = {})
       include AttachmentSan
       
-      self.attachment_san_options = {
-        :base_path       => Rails.root + 'public',
-        :extension       => :original_file,
-        :filename_scheme => :variant_name
+      opt = self.attachment_san_options = {
+        :public_base_path => '',
+        :extension        => :original_file,
+        :filename_scheme  => :variant_name
       }.merge(options)
+      # default :base_path to expanded :public_base_path.
+      opt[:base_path] ||= Rails.root + File.join('public', opt[:public_base_path])
+      opt
     end
   end
   
