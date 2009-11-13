@@ -7,7 +7,7 @@ module AttachmentSan
       include AttachmentSan
       
       self.attachment_san_options = {
-        :base_path       => Rails.root + 'public/images',
+        :base_path       => Rails.root + 'public',
         :extension       => :original_file,
         :filename_scheme => :variant_name
       }.merge(options)
@@ -18,7 +18,7 @@ module AttachmentSan
   
   def self.included(model)
     self.attachment_class = model
-    model.extend VariantModelClassMethods
+    model.extend Variant::ClassMethods
     
     model.class_inheritable_accessor :attachment_san_options
     model.define_callbacks :before_upload, :after_upload

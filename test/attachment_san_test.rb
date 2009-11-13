@@ -9,8 +9,8 @@ describe "AttachmentSan, concerning base options" do
     attachment_san :base_path => '/some/base/path', :extension => :png, :filename_scheme => :hashed
   end
   
-  it "should default the base_path to public/images" do
-    default.attachment_san_options[:base_path].should == Rails.root + 'public/images'
+  it "should default the base_path to public" do
+    default.attachment_san_options[:base_path].should == Rails.root + 'public'
   end
   
   it "should use the specified base_path" do
@@ -21,8 +21,14 @@ describe "AttachmentSan, concerning base options" do
     default.attachment_san_options[:filename_scheme].should == :variant_name
   end
   
-  it "should use the specified file extension for variants" do
+  it "should use a hashed version for variant filenames" do
     specified.attachment_san_options[:filename_scheme].should == :hashed
+  end
+  
+  it "should use the unique records identifier for variant filenames" do
+    OptionsStub.new_subclass do
+      attachment_san :filename_scheme => :record_identifier
+    end.attachment_san_options[:filename_scheme].should == :record_identifier
   end
   
   it "should default to use the original file's extension for variants" do

@@ -1,6 +1,9 @@
 class MyVariant < AttachmentSan::Variant; end
 
-class MyProcessor; end
+class MyProcessor
+  def initialize(variant)
+  end
+end
 
 class Document < ActiveRecord::Base
   extend AttachmentSan::Has

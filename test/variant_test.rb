@@ -49,24 +49,45 @@ describe "A AttachmentSan::Variant instance in general" do
     @thumbnail.extension.should == 'jpeg'
   end
   
-  it "should return a filename named after the variant name plus the extension" do
-    Image.attachment_san_options[:filename_scheme] = :variant_name
-    
-    { :original_file => 'png', :jpg => 'jpg' }.each do |setting, ext|
-      Image.attachment_san_options[:extension] = setting
-      @thumbnail.filename.should == "thumbnail.#{ext}"
-      @medium_sized.filename.should == "medium_sized.#{ext}"
-    end
-  end
-  
-  it "should return a filename which is a hashed version of the variant name plus original filename and append the extension" do
+  it "should create the directory that the file_path returns" do
     Image.attachment_san_options[:filename_scheme] = :hashed
     
-    { :original_file => 'png', :jpg => 'jpg' }.each do |setting, ext|
+    @thumbnail.dir_path.should == File.dirname(@thumbnail.file_path)
+    File.should.not.exist @thumbnail.dir_path
+    @thumbnail.mkdir!
+    File.should.exist @thumbnail.dir_path
+  end
+  
+  { :original_file => 'png', :jpg => 'jpg' }.each do |setting, ext|
+    it "should return a filename named after the variant name plus #{setting}" do
+      Image.attachment_san_options[:filename_scheme] = :variant_name
+      Image.attachment_san_options[:extension] = setting
+      
+      @thumbnail.filename.should == "thumbnail.#{ext}"
+      @thumbnail.file_path.should == File.join(@thumbnail.base_path, "thumbnail.#{ext}")
+      @medium_sized.filename.should == "medium_sized.#{ext}"
+      @medium_sized.file_path.should == File.join(@thumbnail.base_path, "medium_sized.#{ext}")
+    end
+    
+    it "should return a filename which is a hashed version of the variant name plus original filename and append #{setting}" do
+      Image.attachment_san_options[:filename_scheme] = :hashed
       Image.attachment_san_options[:extension] = setting
       
       @thumbnail.filename.should == "55/6d/2e/8e/8b/5e/60/15/9d/3f/d9/a8/94/e3/08/26/e2/d6/fc/1c.#{ext}"
+      @thumbnail.file_path.should == File.join(@thumbnail.base_path, "55/6d/2e/8e/8b/5e/60/15/9d/3f/d9/a8/94/e3/08/26/e2/d6/fc/1c.#{ext}")
       @medium_sized.filename.should == "d4/67/c8/41/c2/c9/23/0e/94/5b/0c/f1/21/86/52/cf/c5/a2/41/18.#{ext}"
+      @medium_sized.file_path.should == File.join(@thumbnail.base_path, "d4/67/c8/41/c2/c9/23/0e/94/5b/0c/f1/21/86/52/cf/c5/a2/41/18.#{ext}")
+    end
+    
+    it "should return a filename which is based on the record identifier and variant name plus #{setting}" do
+      Attachment.reset!
+      
+      Image.attachment_san_options[:filename_scheme] = :record_identifier
+      @image.save!
+      
+      Image.attachment_san_options[:extension] = setting
+      @thumbnail.filename.should == "/images/#{@image.id}/thumbnail.#{ext}"
+      @medium_sized.filename.should == "/images/#{@image.id}/medium_sized.#{ext}"
     end
   end
 end
