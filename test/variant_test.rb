@@ -26,6 +26,11 @@ describe "A AttachmentSan::Variant instance in general" do
     @image.original.record.should == @image
   end
   
+  it "should return the `original' variant" do
+    @image.original.should == @image.original
+    @thumbnail.original.should == @image.original
+  end
+  
   it "should call the process proc" do
     MyProcessor.expects(:new).with(@thumbnail)
     @thumbnail.process!

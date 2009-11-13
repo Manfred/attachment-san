@@ -61,6 +61,10 @@ module AttachmentSan
       base_options[:base_path]
     end
     
+    def original
+      @record.original
+    end
+    
     def name
       @reflection[:name]
     end
@@ -108,6 +112,10 @@ module AttachmentSan
     end
     
     class Original < Variant
+      def original
+        self
+      end
+      
       def process!
         mkdir!
         File.open(file_path, 'w') { |f| f.write @record.uploaded_file.read }
