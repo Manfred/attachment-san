@@ -33,6 +33,10 @@ end
 
 require "pathname"
 module Rails
+  def self.env
+    'test'
+  end
+  
   def self.root
     Pathname.new('/path/to/app')
   end
@@ -56,7 +60,6 @@ TMP_DIR = File.join(TEST_ROOT_DIR, 'tmp')
 
 # Classes and methods to aid testing
 require 'lib/schema'
-require 'lib/upload_helpers'
 
 require 'fixtures/models/attachment'
 require 'fixtures/models/document'

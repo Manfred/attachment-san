@@ -1,3 +1,4 @@
+require 'test/unit'
 require 'tempfile'
 require 'fileutils'
 
@@ -39,9 +40,9 @@ module AttachmentSan
     end
     
     def rails_icon
-      uploaded_file(File.join(TEST_ROOT_DIR, 'fixtures', 'files', 'rails.png'), 'image/png')
+      uploaded_file(File.expand_path('../rails.png', __FILE__), 'image/png')
     end
   end
 end
 
-Test::Spec::TestCase::InstanceMethods.send(:include, AttachmentSan::UploadHelpers)
+Test::Unit::TestCase.send(:include, AttachmentSan::UploadHelpers)
