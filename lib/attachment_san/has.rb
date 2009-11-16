@@ -2,12 +2,12 @@ module AttachmentSan
   module Has
     def has_attachment(name, options = {})
       define_variants(name, options)
-      has_one name, :as => :attachable
+      has_one name
     end
     
     def has_attachments(name, options = {})
       define_variants(name, options)
-      has_many name, :as => :attachable
+      has_many name
     end
     
     private
