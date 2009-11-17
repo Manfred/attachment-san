@@ -8,6 +8,20 @@ class MyProcessor
   end
 end
 
+class AddressCard < Attachment
+  class SmallCard < AttachmentSan::Variant
+    def process!
+      puts 'SMALL!'
+    end
+  end
+  
+  class BigCard < AttachmentSan::Variant
+    def process!
+      puts 'BIG!'
+    end
+  end
+end
+
 class Document < ActiveRecord::Base
   extend AttachmentSan::Has
   
@@ -20,4 +34,6 @@ class Document < ActiveRecord::Base
     :medium_sized => proc {},
     :download => proc {}
   }
+  
+  has_attachments :address_cards, :variants => [:small_card, :big_card]
 end

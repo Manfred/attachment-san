@@ -18,6 +18,8 @@ module AttachmentSan
             { :class => x }
           when Proc
             { :class => Variant, :process => x }
+          when nil
+            { :class => const_get(name.to_s.camelize) }
           else
             raise TypeError, "Please specify a options hash, variant class, or process proc. Can't use `#{x.inspect}'."
           end

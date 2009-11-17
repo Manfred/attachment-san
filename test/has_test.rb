@@ -76,3 +76,12 @@ describe "AttachmentSan::Has, concerning attachment definitions with only a defa
     MiscFile.variant_reflections.first[:process].call.should == :from_process_proc
   end
 end
+
+describe "AttachmentSan::Has, concerning attachment definitions with an array of variants" do
+  it "should simply assume the variant class exists" do
+    @document = Document.new
+    card = @document.address_cards.build(:uploaded_file => rails_icon)
+    card.small_card.should.be.instance_of AddressCard::SmallCard
+    card.big_card.should.be.instance_of AddressCard::BigCard
+  end
+end
