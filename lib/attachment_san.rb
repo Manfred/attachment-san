@@ -41,7 +41,7 @@ module AttachmentSan
   end
   
   def extension
-    filename.split('.').last
+    filename.split('.').last if filename.include?('.')
   end
   
   def variants

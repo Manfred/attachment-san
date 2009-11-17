@@ -51,7 +51,7 @@ describe "A AttachmentSan::Variant instance in general" do
   
   it "should use the extension specified in the attachment_san_options" do
     Image.attachment_san_options[:extension] = :jpeg
-    @thumbnail.extension.should == 'jpeg'
+    @thumbnail.extension.should == :jpeg
   end
   
   it "should create the directory that the file_path returns" do
@@ -61,6 +61,14 @@ describe "A AttachmentSan::Variant instance in general" do
     File.should.not.exist @thumbnail.dir_path
     @thumbnail.mkdir!
     File.should.exist @thumbnail.dir_path
+  end
+  
+  it "should return a file_path without trailing dot if the original filename has no extension" do
+    variant = @document.misc_files.build(
+      :uploaded_file => uploaded_file(File.expand_path('../../Rakefile', __FILE__), 'text/plain')
+    ).original
+    
+    variant.file_path.should == File.join(variant.base_path, 'Rakefile')
   end
   
   { :original_file => 'png', :jpg => 'jpg' }.each do |setting, ext|

@@ -79,24 +79,28 @@ module AttachmentSan
     end
     
     def extension
-      (ext = base_options[:extension]) == :original_file ? @record.extension : ext.to_s
+      (ext = base_options[:extension]) == :original_file ? @record.extension : ext
     end
     
     def filename
-      @filename ||=
-        case filename_scheme
-        when :variant_name
-          name.to_s
-        when :original_file
-          @record.filename
-        when :record_identifier
-          @record_class_name ||= @record.class.name.underscore.pluralize
-          "/#{@record_class_name}/#{@record.to_param}/#{name}"
-        when :hashed
-          Digest::SHA1.hexdigest("#{name}+#{@record.filename}").scan(/.{2}/).join('/')
-        else
-          raise ArgumentError, "The :filename_scheme option should be one of `:hashed', `:filename_scheme', `:record_identifier', or `:variant_name', it currently is `#{filename_scheme.inspect}'."
-        end << ".#{extension}"
+      unless @filename
+        @filename = 
+          case filename_scheme
+          when :variant_name
+            name.to_s
+          when :original_file
+            @record.filename
+          when :record_identifier
+            @record_class_name ||= @record.class.name.underscore.pluralize
+            "/#{@record_class_name}/#{@record.to_param}/#{name}"
+          when :hashed
+            Digest::SHA1.hexdigest("#{name}+#{@record.filename}").scan(/.{2}/).join('/')
+          else
+            raise ArgumentError, "The :filename_scheme option should be one of `:hashed', `:filename_scheme', `:record_identifier', or `:variant_name', it currently is `#{filename_scheme.inspect}'."
+          end
+        @filename << ".#{extension}" unless extension.blank?
+      end
+      @filename
     end
     
     def file_path

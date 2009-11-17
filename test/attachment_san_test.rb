@@ -102,6 +102,9 @@ describe "AttachmentSan, instance methods" do
   
   it "should return the original file's extension" do
     @attachment.extension.should == 'png'
+    
+    @attachment.stubs(:filename).returns('Rakefile')
+    @attachment.extension.should.be nil
   end
 end
 
