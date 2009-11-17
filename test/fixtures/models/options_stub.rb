@@ -11,7 +11,7 @@ class OptionsStub
     # no we don't!
   end
   
-  def self.after_save(m)
+  def self.after_create(m)
     # no we don't!
   end
   

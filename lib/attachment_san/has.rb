@@ -14,9 +14,14 @@ module AttachmentSan
     
     def define_variants(name, options)
       model = create_model(name)
+      
+      original = { :class => Variant::Original }
+      original.merge!(options) unless options.has_key?(:variants)
+      model.define_variant(:original, original)
+      
       if variants = options[:variants]
-        variants.each do |name, class_or_proc|
-          model.define_variant(name, class_or_proc)
+        variants.each do |name, options|
+          model.define_variant(name, options)
         end
       end
     end

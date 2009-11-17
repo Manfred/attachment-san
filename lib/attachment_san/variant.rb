@@ -7,22 +7,23 @@ module AttachmentSan
       def self.extended(model)
         model.class_inheritable_accessor :variant_reflections
         model.variant_reflections = []
-        model.define_variant :original, Variant::Original
       end
       
-      def define_variant(name, variant_class_or_process_proc)
-        name = name.to_sym
-        variant_reflections << (reflection = { :name => name })
+      def define_variant(name, options_or_class_or_proc)
+        reflection =
+          case x = options_or_class_or_proc
+          when Hash
+            { :class => Variant }.merge(x.symbolize_keys)
+          when Class
+            { :class => x }
+          when Proc
+            { :class => Variant, :process => x }
+          else
+            raise TypeError, "Please specify a options hash, variant class, or process proc. Can't use `#{x.inspect}'."
+          end
         
-        case x = variant_class_or_process_proc
-        when Class
-          reflection[:class] = x
-        when Proc
-          reflection[:class] = Variant
-          reflection[:process] = x
-        else
-          raise TypeError, "Please specify a variant class or process proc. Can't use `#{x.inspect}'."
-        end
+        reflection[:name] = name = name.to_sym
+        variant_reflections << reflection
         
         # def original
         #   @original ||= begin

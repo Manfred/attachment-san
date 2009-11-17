@@ -66,3 +66,13 @@ describe "AttachmentSan::Has, concerning a collection of associated attachments"
     end
   end
 end
+
+describe "AttachmentSan::Has, concerning attachment definitions with only a default original variant" do
+  it "should pass the options hash on to the variant" do
+    MiscFile.variant_reflections.length.should == 1
+    MiscFile.variant_reflections.first[:name].should == :original
+    MiscFile.variant_reflections.first[:class].should == AttachmentSan::Variant::Original
+    MiscFile.variant_reflections.first[:filename_scheme].should == :original_file
+    MiscFile.variant_reflections.first[:process].call.should == :from_process_proc
+  end
+end
