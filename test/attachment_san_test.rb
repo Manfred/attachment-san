@@ -113,10 +113,19 @@ describe "An AttachmentSan instance, concerning variants" do
     @document.build_watermark :uploaded_file => @upload
   end
   
-  it "should call process on each of it's variants" do
+  it "should call process on each of it's variants after create" do
     @document.watermark.original.expects(:process!)
     @document.logo.original.expects(:process!)
     @document.logo.header.expects(:process!)
+    @document.save!
+  end
+  
+  it "should not call process when the model already exists" do
+    @document.save!
+    
+    @document.watermark.original.expects(:process!).never
+    @document.logo.original.expects(:process!).never
+    @document.logo.header.expects(:process!).never
     @document.save!
   end
   

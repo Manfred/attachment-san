@@ -11,7 +11,7 @@ module AttachmentSan
         :extension        => :original_file,
         :filename_scheme  => :variant_name
       }.merge(options)
-      # default :base_path to expanded :public_base_path.
+      # Defaults :base_path to expanded :public_base_path.
       opt[:base_path] ||= Rails.root + File.join('public', opt[:public_base_path])
       opt
     end
@@ -25,7 +25,7 @@ module AttachmentSan
     
     model.class_inheritable_accessor :attachment_san_options
     model.define_callbacks :before_upload, :after_upload
-    model.after_save :process_variants!
+    model.after_create :process_variants!
   end
   
   attr_reader :uploaded_file

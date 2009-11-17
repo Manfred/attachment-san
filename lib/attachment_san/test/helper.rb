@@ -16,6 +16,7 @@ module AttachmentSan
       attr_reader :content_type
       
       def initialize(path, content_type = Mime::TEXT, binary = false)
+        path = path.to_s
         raise "#{path} file does not exist" unless File.exist?(path)
         @content_type = content_type
         @original_filename = path.sub(/^.*#{File::SEPARATOR}([^#{File::SEPARATOR}]+)$/) { $1 }
