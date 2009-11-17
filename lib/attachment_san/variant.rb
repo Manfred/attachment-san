@@ -66,6 +66,10 @@ module AttachmentSan
       base_options[:public_base_path]
     end
     
+    def filename_scheme
+      @reflection[:filename_scheme] || base_options[:filename_scheme]
+    end
+    
     def original
       @record.original
     end
@@ -85,17 +89,18 @@ module AttachmentSan
     
     def filename
       @filename ||=
-        case scheme = base_options[:filename_scheme]
+        case filename_scheme
         when :variant_name
           name.to_s
+        when :original_file
+          @record.filename
         when :record_identifier
           @record_class_name ||= @record.class.name.underscore.pluralize
           "/#{@record_class_name}/#{@record.to_param}/#{name}"
         when :hashed
           Digest::SHA1.hexdigest("#{name}+#{@record.filename}").scan(/.{2}/).join('/')
         else
-          raise ArgumentError,
-            "The :filename_scheme option should be one of `:hashed', `:record_identifier', or `:variant_name', it currently is `#{scheme.inspect}'."
+          raise ArgumentError, "The :filename_scheme option should be one of `:hashed', `:filename_scheme', `:record_identifier', or `:variant_name', it currently is `#{filename_scheme.inspect}'."
         end << ".#{extension}"
     end
     
@@ -126,6 +131,7 @@ module AttachmentSan
       end
       
       def process!
+        return super if @reflection[:process]
         mkdir!
         File.open(file_path, 'w') { |f| f.write @record.uploaded_file.read }
       end

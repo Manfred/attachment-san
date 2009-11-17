@@ -108,7 +108,7 @@ describe "A AttachmentSan::Variant instance in general" do
   end
 end
 
-describe "AttachmentSan::Variant, concerning a default variant" do
+describe "AttachmentSan::Variant, concerning a default variant without extra options" do
   before do
     @upload = rails_icon
     @document = Document.new
@@ -128,5 +128,26 @@ describe "AttachmentSan::Variant, concerning a default variant" do
     
     File.should.exist file_path
     File.read(file_path).should == File.read(@upload.path)
+  end
+end
+
+describe "AttachmentSan::Variant, concerning a default variant with extra options" do
+  before do
+    @upload = rails_icon
+    @document = Document.new
+    @variant = @document.misc_files.build(:uploaded_file => @upload).original
+  end
+  
+  it "should return the filename_scheme value that was specified" do
+    @variant.filename_scheme.should == :original_file
+  end
+  
+  it "should return the original file's name" do
+    @variant.filename.should == @variant.record.filename
+  end
+  
+  it "should call the specified process proc" do
+    result = @variant.process!
+    result.should == :from_process_proc
   end
 end
