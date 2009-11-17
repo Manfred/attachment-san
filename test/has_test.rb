@@ -72,7 +72,7 @@ describe "AttachmentSan::Has, concerning attachment definitions with only a defa
     MiscFile.variant_reflections.length.should == 1
     MiscFile.variant_reflections.first[:name].should == :original
     MiscFile.variant_reflections.first[:class].should == AttachmentSan::Variant::Original
-    MiscFile.variant_reflections.first[:filename_scheme].should == :original_file
+    MiscFile.variant_reflections.first[:filename_scheme].should == :keep_original
     MiscFile.variant_reflections.first[:process].call.should == :from_process_proc
   end
 end

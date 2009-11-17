@@ -48,8 +48,7 @@ describe "AttachmentSan, concerning base options" do
   end
   
   it "should default to use the original file's extension for variants" do
-    default.attachment_san_options[:extension].should == :original_file
-  end
+    default.attachment_san_options[:extension].should == :keep_original  end
   
   it "should use the specified file extension for variants" do
     specified.attachment_san_options[:extension].should == :png

@@ -14,7 +14,7 @@ class Document < ActiveRecord::Base
   has_attachment  :watermark
   has_attachment  :logo, :variants => { :header => MyVariant }
   
-  has_attachments :misc_files, :filename_scheme => :original_file, :process => proc { :from_process_proc }
+  has_attachments :misc_files, :filename_scheme => :keep_original, :process => proc { :from_process_proc }
   has_attachments :images, :variants => {
     :thumbnail => proc { |v| MyProcessor.new(v) },
     :medium_sized => proc {},

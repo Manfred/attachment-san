@@ -79,7 +79,7 @@ module AttachmentSan
     end
     
     def extension
-      (ext = base_options[:extension]) == :original_file ? @record.extension : ext
+      (ext = base_options[:extension]) == :keep_original ? @record.extension : ext
     end
     
     def filename
@@ -88,7 +88,7 @@ module AttachmentSan
           case filename_scheme
           when :variant_name
             name.to_s
-          when :original_file
+          when :keep_original
             @record.filename
           when :record_identifier
             @record_class_name ||= @record.class.name.underscore.pluralize

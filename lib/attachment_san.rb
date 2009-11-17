@@ -8,7 +8,7 @@ module AttachmentSan
       
       opt = self.attachment_san_options = {
         :public_base_path => '',
-        :extension        => :original_file,
+        :extension        => :keep_original,
         :filename_scheme  => :variant_name
       }.merge(options)
       # Defaults :base_path to expanded :public_base_path.

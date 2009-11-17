@@ -45,7 +45,7 @@ describe "A AttachmentSan::Variant instance in general" do
   end
   
   it "should return the extension of the original file" do
-    Image.attachment_san_options[:extension] = :original_file
+    Image.attachment_san_options[:extension] = :keep_original
     @thumbnail.extension.should == 'png'
   end
   
@@ -71,7 +71,7 @@ describe "A AttachmentSan::Variant instance in general" do
     variant.file_path.should == File.join(variant.base_path, 'Rakefile')
   end
   
-  { :original_file => 'png', :jpg => 'jpg' }.each do |setting, ext|
+  { :keep_original => 'png', :jpg => 'jpg' }.each do |setting, ext|
     it "should return a filename named after the variant name plus #{setting}" do
       Image.attachment_san_options[:filename_scheme] = :variant_name
       Image.attachment_san_options[:extension] = setting
@@ -147,8 +147,7 @@ describe "AttachmentSan::Variant, concerning a default variant with extra option
   end
   
   it "should return the filename_scheme value that was specified" do
-    @variant.filename_scheme.should == :original_file
-  end
+    @variant.filename_scheme.should == :keep_original  end
   
   it "should return the original file's name" do
     @variant.filename.should == @variant.record.filename
