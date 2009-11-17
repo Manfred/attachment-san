@@ -79,12 +79,7 @@ module AttachmentSan
     end
     
     def extension
-      case ext = base_options[:extension]
-      when :original_file
-        @record.extension
-      else
-        ext.to_s
-      end
+      (ext = base_options[:extension]) == :original_file ? @record.extension : ext.to_s
     end
     
     def filename
