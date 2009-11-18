@@ -44,6 +44,10 @@ module AttachmentSan
     filename.split('.').last if filename.include?('.')
   end
   
+  def filename_without_extension
+    filename.include?('.') ? filename.split('.')[0..-2].join('.') : filename
+  end
+  
   def variants
     self.class.variant_reflections.map { |reflection| send(reflection[:name]) }
   end

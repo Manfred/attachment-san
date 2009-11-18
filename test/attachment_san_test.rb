@@ -10,7 +10,7 @@ describe "AttachmentSan, concerning base options" do
   end
   
   specified = OptionsStub.new_subclass do
-    attachment_san :base_path => '/some/base/path', :public_base_path => '/files/assets', :extension => :png, :filename_scheme => :hashed
+    attachment_san :base_path => '/some/base/path', :public_base_path => '/files/assets', :extension => :png, :filename_scheme => :token
   end
   
   it "should default the base_path to `public'" do
@@ -37,8 +37,8 @@ describe "AttachmentSan, concerning base options" do
     default.attachment_san_options[:filename_scheme].should == :variant_name
   end
   
-  it "should use a hashed version for variant filenames" do
-    specified.attachment_san_options[:filename_scheme].should == :hashed
+  it "should use a token version for variant filenames" do
+    specified.attachment_san_options[:filename_scheme].should == :token
   end
   
   it "should use the unique records identifier for variant filenames" do
@@ -104,6 +104,16 @@ describe "AttachmentSan, instance methods" do
     
     @attachment.stubs(:filename).returns('Rakefile')
     @attachment.extension.should.be nil
+  end
+  
+  it "should return the original filename without extension" do
+    @attachment.filename_without_extension.should == 'rails'
+    
+    @attachment.stubs(:filename).returns('Rakefile')
+    @attachment.filename_without_extension.should == 'Rakefile'
+    
+    @attachment.stubs(:filename).returns('some.dotted.spaced.file.txt')
+    @attachment.filename_without_extension.should == 'some.dotted.spaced.file'
   end
 end
 

@@ -55,7 +55,7 @@ describe "A AttachmentSan::Variant instance in general" do
   end
   
   it "should create the directory that the file_path returns" do
-    Image.attachment_san_options[:filename_scheme] = :hashed
+    Image.attachment_san_options[:filename_scheme] = :record_identifier
     
     @thumbnail.dir_path.should == File.dirname(@thumbnail.file_path)
     File.should.not.exist @thumbnail.dir_path
@@ -85,17 +85,18 @@ describe "A AttachmentSan::Variant instance in general" do
       @medium_sized.public_path.should == File.join(@thumbnail.public_base_path, "medium_sized.#{ext}")
     end
     
-    it "should return a filename which is a hashed version of the variant name plus original filename and append #{setting}" do
-      Image.attachment_san_options[:filename_scheme] = :hashed
+    it "should return a filename which should be a random token from the record and append #{setting}" do
+      Image.attachment_san_options[:filename_scheme] = :token
       Image.attachment_san_options[:extension] = setting
+      @image.stubs(:token).returns('556d2e8e')
       
-      @thumbnail.filename.should == "55/6d/2e/8e/8b/5e/60/15/9d/3f/d9/a8/94/e3/08/26/e2/d6/fc/1c.#{ext}"
-      @thumbnail.file_path.should == File.join(@thumbnail.base_path, "55/6d/2e/8e/8b/5e/60/15/9d/3f/d9/a8/94/e3/08/26/e2/d6/fc/1c.#{ext}")
-      @thumbnail.public_path.should == File.join(@thumbnail.public_base_path, "55/6d/2e/8e/8b/5e/60/15/9d/3f/d9/a8/94/e3/08/26/e2/d6/fc/1c.#{ext}")
+      @image.original.filename.should == "55/6d/2e/8e/rails.#{ext}"
+      @image.original.file_path.should == File.join(@thumbnail.base_path, "55/6d/2e/8e/rails.#{ext}")
+      @image.original.public_path.should == File.join(@thumbnail.public_base_path, "55/6d/2e/8e/rails.#{ext}")
       
-      @medium_sized.filename.should == "d4/67/c8/41/c2/c9/23/0e/94/5b/0c/f1/21/86/52/cf/c5/a2/41/18.#{ext}"
-      @medium_sized.file_path.should == File.join(@thumbnail.base_path, "d4/67/c8/41/c2/c9/23/0e/94/5b/0c/f1/21/86/52/cf/c5/a2/41/18.#{ext}")
-      @medium_sized.public_path.should == File.join(@thumbnail.public_base_path, "d4/67/c8/41/c2/c9/23/0e/94/5b/0c/f1/21/86/52/cf/c5/a2/41/18.#{ext}")
+      @thumbnail.filename.should == "55/6d/2e/8e/rails.thumbnail.#{ext}"
+      @thumbnail.file_path.should == File.join(@thumbnail.base_path, "55/6d/2e/8e/rails.thumbnail.#{ext}")
+      @thumbnail.public_path.should == File.join(@thumbnail.public_base_path, "55/6d/2e/8e/rails.thumbnail.#{ext}")
     end
     
     it "should return a filename which is based on the record identifier and variant name plus #{setting}" do

@@ -95,10 +95,10 @@ module AttachmentSan
           when :record_identifier
             @record_class_name ||= @record.class.name.underscore.pluralize
             "/#{@record_class_name}/#{@record.to_param}/#{name}"
-          when :hashed
-            Digest::SHA1.hexdigest("#{name}+#{@record.filename}").scan(/.{2}/).join('/')
+          when :token
+            File.join(@record.token.scan(/.{2}/), "#{@record.filename_without_extension}.#{name}")
           else
-            raise ArgumentError, "The :filename_scheme option should be one of `:hashed', `:filename_scheme', `:record_identifier', or `:variant_name', it currently is `#{filename_scheme.inspect}'."
+            raise ArgumentError, "The :filename_scheme option should be one of `:token', `:filename_scheme', `:record_identifier', or `:variant_name', it currently is `#{filename_scheme.inspect}'."
           end
         @filename << ".#{extension}" unless extension.blank?
       end
@@ -129,6 +129,18 @@ module AttachmentSan
     class Original < Variant
       def original
         self
+      end
+      
+      def filename
+        unless @filename
+          super
+          if filename_scheme == :token
+            parts = @filename.split('.')
+            parts.delete_at(-2)
+            @filename = parts.join('.')
+          end
+        end
+        @filename
       end
       
       def process!
