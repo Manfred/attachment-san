@@ -90,9 +90,9 @@ describe "A AttachmentSan::Variant instance in general" do
       Image.attachment_san_options[:extension] = setting
       @image.stubs(:token).returns('556d2e8e')
       
-      @image.original.filename.should == "55/6d/2e/8e/rails.#{ext}"
-      @image.original.file_path.should == File.join(@thumbnail.base_path, "55/6d/2e/8e/rails.#{ext}")
-      @image.original.public_path.should == File.join(@thumbnail.public_base_path, "55/6d/2e/8e/rails.#{ext}")
+      @image.original.filename.should == "55/6d/2e/8e/rails.png"
+      @image.original.file_path.should == File.join(@thumbnail.base_path, "55/6d/2e/8e/rails.png")
+      @image.original.public_path.should == File.join(@thumbnail.public_base_path, "55/6d/2e/8e/rails.png")
       
       @thumbnail.filename.should == "55/6d/2e/8e/rails.thumbnail.#{ext}"
       @thumbnail.file_path.should == File.join(@thumbnail.base_path, "55/6d/2e/8e/rails.thumbnail.#{ext}")
