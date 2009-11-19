@@ -9,6 +9,12 @@ module AttachmentSan
         model.variant_reflections = []
       end
       
+      def reflect_on_variant(name)
+        variant_reflections.find { |r| r[:name] == name.to_sym }
+      end
+      
+      private
+      
       def define_variant(name, options_or_class_or_proc)
         reflection =
           case x = options_or_class_or_proc
@@ -41,10 +47,6 @@ module AttachmentSan
             end
           end
         DEF
-      end
-      
-      def reflect_on_variant(name)
-        variant_reflections.find { |r| r[:name] == name.to_sym }
       end
     end
   end

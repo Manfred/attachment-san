@@ -1,5 +1,23 @@
 require File.expand_path('../test_helper', __FILE__)
 
+describe "AttachmentSan::Has" do
+  it "should pass on any unknown options to the has_one macro" do
+    Document.expects(:has_one).with(:other_file, :as => :attachable, :order => :updated_at)
+    Document.expects(:define_variants).with(:other_file, :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga])
+    
+    Document.has_attachment :other_file, :as => :attachable, :order => :updated_at,
+                                         :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga]
+  end
+  
+  it "should pass on any unknown options to the has_many macro" do
+    Document.expects(:has_many).with(:other_files, :as => :attachable, :order => :updated_at)
+    Document.expects(:define_variants).with(:other_files, :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga])
+    
+    Document.has_attachments :other_files, :as => :attachable, :order => :updated_at,
+                                           :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga]
+  end
+end
+
 describe "AttachmentSan::Has, concerning a single associated attachment" do
   before do
     @document = Document.new
