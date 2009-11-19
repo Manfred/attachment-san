@@ -16,6 +16,17 @@ describe "AttachmentSan::Has" do
     Document.has_attachments :other_files, :as => :attachable, :order => :updated_at,
                                            :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga]
   end
+  
+  it "should not define an association if an association for the given name exists" do
+    Document.expects(:has_one).never
+    Document.expects(:define_variants).with(:watermark, {})
+    
+    Document.expects(:has_many).never
+    Document.expects(:define_variants).with(:images, {})
+    
+    Document.has_attachment :watermark, :as => :attachable
+    Document.has_attachments :images, :as => :attachable
+  end
 end
 
 describe "AttachmentSan::Has, concerning a single associated attachment" do

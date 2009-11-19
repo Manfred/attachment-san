@@ -14,7 +14,7 @@ module AttachmentSan
     
     def define_attachment_association(macro, name, options)
       define_variants(name, extract_variant_options!(options))
-      send(macro, name, options)
+      send(macro, name, options) unless reflect_on_association(name)
     end
     
     def extract_variant_options!(options)
