@@ -16,6 +16,8 @@ module AttachmentSan
       private
       
       def define_variant(name, options_or_class_or_proc)
+        return if reflect_on_variant(name)
+        
         reflection =
           case x = options_or_class_or_proc
           when Hash

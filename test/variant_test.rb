@@ -1,6 +1,6 @@
 require File.expand_path('../test_helper', __FILE__)
 
-describe "AttachmentSan's variant reflection" do
+describe "AttachmentSan's variant class methods" do
   it "should return the variant class to use" do
     reflection = Logo.reflect_on_variant(:header)
     reflection[:class].should.be MyVariant
@@ -9,6 +9,12 @@ describe "AttachmentSan's variant reflection" do
   it "should by default use the AttachmentSan::Variant class" do
     reflection = Image.reflect_on_variant(:thumbnail)
     reflection[:class].should.be AttachmentSan::Variant
+  end
+  
+  it "should not define a variant twice" do
+    count_before = Logo.variant_reflections.length
+    Document.has_attachment :logo, :variants => { :header => MyVariant }
+    Logo.variant_reflections.length.should == count_before
   end
 end
 
