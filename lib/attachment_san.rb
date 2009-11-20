@@ -35,7 +35,7 @@ module AttachmentSan
     
     @uploaded_file    = uploaded_file
     self.filename     = uploaded_file.original_filename
-    self.content_type = uploaded_file.content_type
+    self.content_type = uploaded_file.content_type.strip
     
     callback :after_upload
   end

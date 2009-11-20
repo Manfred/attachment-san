@@ -95,8 +95,10 @@ describe "AttachmentSan, instance methods" do
     @attachment.filename.should == @upload.original_filename
   end
   
-  it "should assign the content type to the model" do
-    @attachment.content_type.should == @upload.content_type
+  it "should strip the content type and assign to the model" do
+    @upload.stubs(:content_type).returns("\simage/png\r\n")
+    @attachment = Attachment.new(:uploaded_file => @upload)
+    @attachment.content_type.should == 'image/png'
   end
   
   it "should return the original file's extension" do
