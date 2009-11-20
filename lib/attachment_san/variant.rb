@@ -92,6 +92,11 @@ module AttachmentSan
       @record.token.scan(/.{2}/)
     end
     
+    # Returns the original filename, without extension, and appends the variant name.
+    def filename_with_variant_name
+      "#{@record.filename_without_extension}.#{name}"
+    end
+    
     def filename
       unless @filename
         @filename = 
@@ -99,12 +104,12 @@ module AttachmentSan
           when :variant_name
             name.to_s
           when :keep_original
-            @record.filename
+            filename_with_variant_name
           when :record_identifier
             @record_class_name ||= @record.class.name.underscore.pluralize
             "/#{@record_class_name}/#{@record.to_param}/#{name}"
           when :token
-            File.join(token, "#{@record.filename_without_extension}.#{name}")
+            File.join(token, filename_with_variant_name)
           else
             raise ArgumentError, "The :filename_scheme option should be one of `:token', `:filename_scheme', `:record_identifier', or `:variant_name', it currently is `#{filename_scheme.inspect}'."
           end
@@ -140,7 +145,15 @@ module AttachmentSan
       end
       
       def filename
-        @filename ||= (filename_scheme == :token ? File.join(token, @record.filename) : super)
+        @filename ||=
+          case filename_scheme
+          when :token
+            File.join(token, @record.filename)
+          when :keep_original
+            @record.filename
+          else
+            super
+          end
       end
       
       def process!

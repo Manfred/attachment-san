@@ -91,6 +91,19 @@ describe "A AttachmentSan::Variant instance in general" do
       @medium_sized.public_path.should == File.join(@thumbnail.public_base_path, "medium_sized.#{ext}")
     end
     
+    it "should return the original filename and use extension #{setting}" do
+      Image.attachment_san_options[:filename_scheme] = :keep_original
+      Image.attachment_san_options[:extension] = setting
+      
+      @image.original.filename.should == "rails.png"
+      @image.original.file_path.should == File.join(@thumbnail.base_path, "rails.png")
+      @image.original.public_path.should == File.join(@thumbnail.public_base_path, "rails.png")
+      
+      @thumbnail.filename.should == "rails.thumbnail.#{ext}"
+      @thumbnail.file_path.should == File.join(@thumbnail.base_path, "rails.thumbnail.#{ext}")
+      @thumbnail.public_path.should == File.join(@thumbnail.public_base_path, "rails.thumbnail.#{ext}")
+    end
+    
     it "should return a filename which should be a random token from the record and append #{setting}" do
       Image.attachment_san_options[:filename_scheme] = :token
       Image.attachment_san_options[:extension] = setting
