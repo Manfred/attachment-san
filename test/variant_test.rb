@@ -2,19 +2,19 @@ require File.expand_path('../test_helper', __FILE__)
 
 describe "AttachmentSan's variant class methods" do
   it "should return the variant class to use" do
-    reflection = Logo.reflect_on_variant(:header)
+    reflection = Document::Logo.reflect_on_variant(:header)
     reflection[:class].should.be MyVariant
   end
   
   it "should by default use the AttachmentSan::Variant class" do
-    reflection = Image.reflect_on_variant(:thumbnail)
+    reflection = Document::Image.reflect_on_variant(:thumbnail)
     reflection[:class].should.be AttachmentSan::Variant
   end
   
   it "should not define a variant twice" do
-    count_before = Logo.variant_reflections.length
+    count_before = Document::Logo.variant_reflections.length
     Document.has_attachment :logo, :variants => { :header => MyVariant }
-    Logo.variant_reflections.length.should == count_before
+    Document::Logo.variant_reflections.length.should == count_before
   end
 end
 
@@ -51,17 +51,17 @@ describe "A AttachmentSan::Variant instance in general" do
   end
   
   it "should return the extension of the original file" do
-    Image.attachment_san_options[:extension] = :keep_original
+    Document::Image.attachment_san_options[:extension] = :keep_original
     @thumbnail.extension.should == 'png'
   end
   
   it "should use the extension specified in the attachment_san_options" do
-    Image.attachment_san_options[:extension] = :jpeg
+    Document::Image.attachment_san_options[:extension] = :jpeg
     @thumbnail.extension.should == :jpeg
   end
   
   it "should create the directory that the file_path returns" do
-    Image.attachment_san_options[:filename_scheme] = :record_identifier
+    Document::Image.attachment_san_options[:filename_scheme] = :record_identifier
     
     @thumbnail.dir_path.should == File.dirname(@thumbnail.file_path)
     File.should.not.exist @thumbnail.dir_path
@@ -79,8 +79,8 @@ describe "A AttachmentSan::Variant instance in general" do
   
   { :keep_original => 'png', :jpg => 'jpg' }.each do |setting, ext|
     it "should return a filename named after the variant name plus #{setting}" do
-      Image.attachment_san_options[:filename_scheme] = :variant_name
-      Image.attachment_san_options[:extension] = setting
+      Document::Image.attachment_san_options[:filename_scheme] = :variant_name
+      Document::Image.attachment_san_options[:extension] = setting
       
       @thumbnail.filename.should == "thumbnail.#{ext}"
       @thumbnail.file_path.should == File.join(@thumbnail.base_path, "thumbnail.#{ext}")
@@ -92,8 +92,8 @@ describe "A AttachmentSan::Variant instance in general" do
     end
     
     it "should return the original filename and use extension #{setting}" do
-      Image.attachment_san_options[:filename_scheme] = :keep_original
-      Image.attachment_san_options[:extension] = setting
+      Document::Image.attachment_san_options[:filename_scheme] = :keep_original
+      Document::Image.attachment_san_options[:extension] = setting
       
       @image.original.filename.should == "rails.png"
       @image.original.file_path.should == File.join(@thumbnail.base_path, "rails.png")
@@ -105,8 +105,8 @@ describe "A AttachmentSan::Variant instance in general" do
     end
     
     it "should return a filename which should be a random token from the record and append #{setting}" do
-      Image.attachment_san_options[:filename_scheme] = :token
-      Image.attachment_san_options[:extension] = setting
+      Document::Image.attachment_san_options[:filename_scheme] = :token
+      Document::Image.attachment_san_options[:extension] = setting
       @image.stubs(:token).returns('556d2e8e')
       
       @image.original.filename.should == "55/6d/2e/8e/rails.png"
@@ -121,8 +121,8 @@ describe "A AttachmentSan::Variant instance in general" do
     it "should return a filename which is based on the record identifier and variant name plus #{setting}" do
       Attachment.reset!
       
-      Image.attachment_san_options[:extension] = setting
-      Image.attachment_san_options[:filename_scheme] = :record_identifier
+      Document::Image.attachment_san_options[:extension] = setting
+      Document::Image.attachment_san_options[:filename_scheme] = :record_identifier
       @image.save!
       
       @thumbnail.filename.should == "/images/#{@image.id}/thumbnail.#{ext}"

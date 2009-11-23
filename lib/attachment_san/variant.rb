@@ -106,7 +106,8 @@ module AttachmentSan
           when :keep_original
             filename_with_variant_name
           when :record_identifier
-            @record_class_name ||= @record.class.name.underscore.pluralize
+            # For now we take only the demodulized attachment class name.
+            @record_class_name ||= @record.class.name.demodulize.underscore.pluralize
             "/#{@record_class_name}/#{@record.to_param}/#{name}"
           when :token
             File.join(token, filename_with_variant_name)

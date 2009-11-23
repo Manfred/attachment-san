@@ -36,21 +36,21 @@ describe "AttachmentSan::Has, concerning a single associated attachment" do
     @document.build_watermark :uploaded_file => rails_icon
   end
   
-  it "should create a model class and a has_one association" do
+  it "should create an attachment model class, nested under the defining model clas, and a has_one association" do
     reflection = Document.reflect_on_association(:logo)
     reflection.macro.should == :has_one
-    reflection.klass.should == Logo
-    Logo.superclass.should.be AttachmentSan.attachment_class
+    reflection.klass.should == Document::Logo
+    Document::Logo.superclass.should.be AttachmentSan.attachment_class
   end
   
   it "should store the variant options on the new model class" do
-    Watermark.variant_reflections.length.should == 1
-    Watermark.variant_reflections.first[:name].should == :original
-    Watermark.variant_reflections.first[:class].should == AttachmentSan::Variant::Original
+    Document::Watermark.variant_reflections.length.should == 1
+    Document::Watermark.variant_reflections.first[:name].should == :original
+    Document::Watermark.variant_reflections.first[:class].should == AttachmentSan::Variant::Original
     
-    Logo.variant_reflections.length.should == 2
-    Logo.variant_reflections.last[:name].should == :header
-    Logo.variant_reflections.last[:class].should == MyVariant
+    Document::Logo.variant_reflections.length.should == 2
+    Document::Logo.variant_reflections.last[:name].should == :header
+    Document::Logo.variant_reflections.last[:class].should == MyVariant
   end
   
   it "should define only a default original variant if no other variants are given" do
@@ -63,7 +63,7 @@ describe "AttachmentSan::Has, concerning a single associated attachment" do
     %w{ original header }.each do |name|
       variant = @document.logo.send(name)
       variant.name.to_s.should == name
-      variant.should.be.instance_of Logo.reflect_on_variant(name)[:class]
+      variant.should.be.instance_of Document::Logo.reflect_on_variant(name)[:class]
     end
   end
 end
@@ -75,10 +75,10 @@ describe "AttachmentSan::Has, concerning a collection of associated attachments"
     2.times { @document.misc_files.build :uploaded_file => rails_icon }
   end
   
-  it "should create a model class and a has_many association" do
+  it "should create an attachment model class, nested under the defining model clas, and a has_many association" do
     reflection = Document.reflect_on_association(:images)
     reflection.macro.should == :has_many
-    reflection.klass.should == Image
+    reflection.klass.should == Document::Image
   end
   
   it "should define only a default original variant if no others are given" do
@@ -98,11 +98,11 @@ end
 
 describe "AttachmentSan::Has, concerning attachment definitions with only a default original variant" do
   it "should pass the options hash on to the variant" do
-    MiscFile.variant_reflections.length.should == 1
-    MiscFile.variant_reflections.first[:name].should == :original
-    MiscFile.variant_reflections.first[:class].should == AttachmentSan::Variant::Original
-    MiscFile.variant_reflections.first[:filename_scheme].should == :keep_original
-    MiscFile.variant_reflections.first[:process].call.should == :from_process_proc
+    Document::MiscFile.variant_reflections.length.should == 1
+    Document::MiscFile.variant_reflections.first[:name].should == :original
+    Document::MiscFile.variant_reflections.first[:class].should == AttachmentSan::Variant::Original
+    Document::MiscFile.variant_reflections.first[:filename_scheme].should == :keep_original
+    Document::MiscFile.variant_reflections.first[:process].call.should == :from_process_proc
   end
 end
 
@@ -110,7 +110,7 @@ describe "AttachmentSan::Has, concerning attachment definitions with an array of
   it "should simply assume the variant class exists" do
     @document = Document.new
     card = @document.address_cards.build(:uploaded_file => rails_icon)
-    card.small_card.should.be.instance_of AddressCard::SmallCard
-    card.big_card.should.be.instance_of AddressCard::BigCard
+    card.small_card.should.be.instance_of Document::AddressCard::SmallCard
+    card.big_card.should.be.instance_of Document::AddressCard::BigCard
   end
 end

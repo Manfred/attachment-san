@@ -41,9 +41,9 @@ module AttachmentSan
     # TODO: Currently creates these classes in the top level namespace
     def create_model(name)
       name = name.to_s.classify
-      ::Object.const_get(name)
+      const_get(name)
     rescue NameError
-      ::Object.const_set name, Class.new(AttachmentSan.attachment_class)
+      const_set name, Class.new(AttachmentSan.attachment_class)
     end
   end
 end
