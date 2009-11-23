@@ -41,6 +41,15 @@ describe "AttachmentSan::Has, concerning a single associated attachment" do
     reflection.macro.should == :has_one
     reflection.klass.should == Document::Logo
     Document::Logo.superclass.should.be AttachmentSan.attachment_class
+    Document::Logo.reflect_on_variant(:header)[:class].should.be MyVariant
+  end
+  
+  it "should create different attachment model classes for different defining model classes" do
+    reflection = OtherDocument.reflect_on_association(:logo)
+    reflection.macro.should == :has_one
+    reflection.klass.should == OtherDocument::Logo
+    OtherDocument::Logo.superclass.should.be AttachmentSan.attachment_class
+    OtherDocument::Logo.reflect_on_variant(:header)[:class].should.be MyOtherVariant
   end
   
   it "should store the variant options on the new model class" do

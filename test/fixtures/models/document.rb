@@ -25,8 +25,6 @@ class Document < ActiveRecord::Base
     end
   end
   
-  extend AttachmentSan::Has
-  
   has_attachment  :watermark
   has_attachment  :logo, :variants => { :header => MyVariant }
   
@@ -40,7 +38,7 @@ class Document < ActiveRecord::Base
   has_attachments :address_cards, :variants => [:small_card, :big_card]
 end
 
-# class OtherDocument < ActiveRecord::Base
-#   has_attachment  :logo, :variants => { :header => MyOtherVariant }
-#   has_attachments :misc_files, :filename_scheme => :keep_original, :process => proc { :from_other_process_proc }
-# end
+class OtherDocument < ActiveRecord::Base
+  has_attachment  :logo, :variants => { :header => MyOtherVariant }
+  has_attachments :misc_files, :filename_scheme => :keep_original, :process => proc { :from_other_process_proc }
+end
