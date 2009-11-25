@@ -27,20 +27,14 @@ module AttachmentSan
     def define_variants(name, options)
       model = create_model(name)
       
-      if options.has_key?(:variants)
-        original = options[:variants][:original] || {}
-        original[:class] ||= Variant::Original if original.is_a?(Hash)
-        model.send(:define_variant, :original, original)
-        
-        if variants = options[:variants]
-          variants.each do |name, variant_options|
-            model.send(:define_variant, name, variant_options)
-          end
+      original = options[:variants] ? (options[:variants][:original] || {}) : options
+      original[:class] ||= Variant::Original if original.is_a?(Hash)
+      model.send(:define_variant, :original, original)
+      
+      if variants = options[:variants]
+        variants.each do |name, variant_options|
+          model.send(:define_variant, name, variant_options)
         end
-      else
-        original = options
-        original[:class] ||= Variant::Original if original.is_a?(Hash)
-        model.send(:define_variant, :original, original)
       end
     end
     
