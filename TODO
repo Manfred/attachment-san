@@ -1,6 +1,3 @@
-* Make it actually work with more than one attachment class.
-  * has_attachment :watermark, :superclass => WatermarkSuperclass
-  * has_attachment :watermark, :class => WatermarkClass
-* Nest created classes under the superclass.
+* Allow the user to override any of the attachment_san_options on the dynamically created attachment subclasses.
 * Do we need to sanitize the original filename, eg lowercase.
 * Make :filename_scheme => :record_identifier also use nesting under parent resources. Eg /resources/1/images/2/filename

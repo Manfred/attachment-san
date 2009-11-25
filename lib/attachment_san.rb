@@ -1,3 +1,4 @@
+require "attachment_san/core_ext"
 require "attachment_san/has"
 require "attachment_san/variant"
 
