@@ -13,8 +13,8 @@ module AttachmentSan
     private
     
     def define_attachment_association(macro, name, options)
-      define_variants(name, extract_variant_options!(options))
-      send(macro, name, options) unless reflect_on_association(name)
+      model = define_variants(name, extract_variant_options!(options))
+      send(macro, name, options.merge(:class_name => model.name)) unless reflect_on_association(name)
     end
     
     def extract_variant_options!(options)
@@ -36,14 +36,15 @@ module AttachmentSan
           model.send(:define_variant, name, variant_options)
         end
       end
+      
+      model
     end
     
-    # TODO: Currently creates these classes in the top level namespace
     def create_model(name)
       name = name.to_s.classify
-      const_get(name)
+      modulized_mod_get(name)
     rescue NameError
-      const_set name, Class.new(AttachmentSan.attachment_class)
+      const_set(name, Class.new(AttachmentSan.attachment_class))
     end
   end
 end

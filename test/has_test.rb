@@ -1,17 +1,23 @@
 require File.expand_path('../test_helper', __FILE__)
 
 describe "AttachmentSan::Has" do
+  class DefinedAttachmentModel < Attachment; end
+  
   it "should pass on any unknown options to the has_one macro" do
-    Document.expects(:has_one).with(:other_file, :as => :attachable, :order => :updated_at)
-    Document.expects(:define_variants).with(:other_file, :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga])
+    Document.expects(:has_one).with(:other_file, :as => :attachable, :order => :updated_at, :class_name => 'DefinedAttachmentModel')
+    Document.expects(:define_variants).
+      with(:other_file, :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga]).
+        returns(DefinedAttachmentModel)
     
     Document.has_attachment :other_file, :as => :attachable, :order => :updated_at,
                                          :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga]
   end
   
   it "should pass on any unknown options to the has_many macro" do
-    Document.expects(:has_many).with(:other_files, :as => :attachable, :order => :updated_at)
-    Document.expects(:define_variants).with(:other_files, :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga])
+    Document.expects(:has_many).with(:other_files, :as => :attachable, :order => :updated_at, :class_name => 'DefinedAttachmentModel')
+    Document.expects(:define_variants).
+      with(:other_files, :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga]).
+        returns(DefinedAttachmentModel)
     
     Document.has_attachments :other_files, :as => :attachable, :order => :updated_at,
                                            :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga]
@@ -29,6 +35,33 @@ describe "AttachmentSan::Has" do
   end
 end
 
+describe "AttachmentSan::Has, concerning defining attachment model subclasses" do
+  it "should create an attachment model class when defining a single attachment association" do
+    Document.reflect_on_association(:logo).klass.should.be Document::Logo
+    Document::Logo.superclass.should.be AttachmentSan.attachment_class
+  end
+  
+  it "should create an attachment model class when defining a collection attachment association" do
+    Document.reflect_on_association(:images).klass.should.be Document::Image
+    Document::Image.superclass.should.be AttachmentSan.attachment_class
+  end
+  
+  it "should create different attachment model classes for different defining model classes" do
+    Document::Logo.reflect_on_variant(:header)[:class].should.be MyVariant
+    
+    OtherDocument.reflect_on_association(:logo).klass.should.be OtherDocument::Logo
+    OtherDocument::Logo.reflect_on_variant(:header)[:class].should.be MyOtherVariant
+  end
+  
+  it "should not look for existing constants outside the defining class's namespace" do
+    class TotallyDifferent; end
+    class Foo < TotallyDifferent; end
+    
+    Document.has_attachment :foo
+    Document.reflect_on_association(:foo).klass.should.be Document::Foo
+  end
+end
+
 describe "AttachmentSan::Has, concerning a single associated attachment" do
   before do
     @document = Document.new
@@ -36,20 +69,8 @@ describe "AttachmentSan::Has, concerning a single associated attachment" do
     @document.build_watermark :uploaded_file => rails_icon
   end
   
-  it "should create an attachment model class, nested under the defining model clas, and a has_one association" do
-    reflection = Document.reflect_on_association(:logo)
-    reflection.macro.should == :has_one
-    reflection.klass.should == Document::Logo
-    Document::Logo.superclass.should.be AttachmentSan.attachment_class
-    Document::Logo.reflect_on_variant(:header)[:class].should.be MyVariant
-  end
-  
-  it "should create different attachment model classes for different defining model classes" do
-    reflection = OtherDocument.reflect_on_association(:logo)
-    reflection.macro.should == :has_one
-    reflection.klass.should == OtherDocument::Logo
-    OtherDocument::Logo.superclass.should.be AttachmentSan.attachment_class
-    OtherDocument::Logo.reflect_on_variant(:header)[:class].should.be MyOtherVariant
+  it "should define a has_one association" do
+    Document.reflect_on_association(:logo).macro.should == :has_one
   end
   
   it "should store the variant options on the new model class" do
@@ -84,10 +105,8 @@ describe "AttachmentSan::Has, concerning a collection of associated attachments"
     2.times { @document.misc_files.build :uploaded_file => rails_icon }
   end
   
-  it "should create an attachment model class, nested under the defining model clas, and a has_many association" do
-    reflection = Document.reflect_on_association(:images)
-    reflection.macro.should == :has_many
-    reflection.klass.should == Document::Image
+  it "should define a has_many association" do
+    Document.reflect_on_association(:images).macro.should == :has_many
   end
   
   it "should define only a default original variant if no others are given" do
