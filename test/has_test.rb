@@ -110,7 +110,7 @@ describe "AttachmentSan::Has, concerning attachment definitions with only a defa
     Document::MiscFile.variant_reflections.length.should == 1
     Document::MiscFile.variant_reflections.first[:name].should == :original
     Document::MiscFile.variant_reflections.first[:class].should == AttachmentSan::Variant::Original
-    Document::MiscFile.variant_reflections.first[:filename_scheme].should == :keep_original
+    # Document::MiscFile.variant_reflections.first[:filename_scheme].should == :keep_original
     Document::MiscFile.variant_reflections.first[:process].call.should == :from_process_proc
   end
 end
