@@ -32,8 +32,8 @@ module AttachmentSan
       model.send(:define_variant, :original, original)
       
       if variants = options[:variants]
-        variants.each do |name, options|
-          model.send(:define_variant, name, options)
+        variants.each do |name, variant_options|
+          model.send(:define_variant, name, variant_options)
         end
       end
     end

@@ -11,20 +11,6 @@ class MyProcessor
 end
 
 class Document < ActiveRecord::Base
-  class AddressCard < Attachment
-    class SmallCard < AttachmentSan::Variant
-      def process!
-        puts 'SMALL!'
-      end
-    end
-    
-    class BigCard < AttachmentSan::Variant
-      def process!
-        puts 'BIG!'
-      end
-    end
-  end
-  
   has_attachment  :watermark
   has_attachment  :logo, :variants => { :header => MyVariant }
   
@@ -34,8 +20,6 @@ class Document < ActiveRecord::Base
     :medium_sized => proc {},
     :download => proc {}
   }
-  
-  has_attachments :address_cards, :variants => [:small_card, :big_card]
 end
 
 class OtherDocument < ActiveRecord::Base
