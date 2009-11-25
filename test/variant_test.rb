@@ -60,6 +60,17 @@ describe "A AttachmentSan::Variant instance in general" do
     @thumbnail.extension.should == :jpeg
   end
   
+  it "should should use the base_path and public_base_path that were overridden on the has_attachment(s) definition" do
+    @document = OtherDocument.new
+    @image = @document.images.build(:uploaded_file => @upload)
+    
+    @image.original.base_path.should == '/other/base'
+    @image.original.public_base_path.should == '/other/public'
+    
+    @image.normal.base_path.should == '/yet/another/base'
+    @image.normal.public_base_path.should == '/other/public'
+  end
+  
   it "should create the directory that the file_path returns" do
     Document::Image.attachment_san_options[:filename_scheme] = :record_identifier
     

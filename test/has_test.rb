@@ -1,34 +1,38 @@
 require File.expand_path('../test_helper', __FILE__)
 
 describe "AttachmentSan::Has" do
-  class DefinedAttachmentModel < Attachment; end
+  process_proc = proc {}
   
   it "should pass on any unknown options to the has_one macro" do
-    Document.expects(:has_one).with(:other_file, :as => :attachable, :order => :updated_at, :class_name => 'DefinedAttachmentModel')
-    Document.expects(:define_variants).
-      with(:other_file, :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga]).
-        returns(DefinedAttachmentModel)
+    Document.expects(:has_one).with(:other_file, :as => :attachable, :order => :updated_at, :class_name => 'Document::OtherFile')
+    Document.expects(:define_variants).with do |model, options|
+      model == Document::OtherFile && options == { :process => process_proc, :class => MyVariant }
+    end
     
     Document.has_attachment :other_file, :as => :attachable, :order => :updated_at,
-                                         :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga]
+                                         :process => process_proc, :class => MyVariant, :filename_scheme => :token
   end
   
   it "should pass on any unknown options to the has_many macro" do
-    Document.expects(:has_many).with(:other_files, :as => :attachable, :order => :updated_at, :class_name => 'DefinedAttachmentModel')
-    Document.expects(:define_variants).
-      with(:other_files, :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga]).
-        returns(DefinedAttachmentModel)
+    Document.expects(:has_many).with(:other_files, :as => :attachable, :order => :updated_at, :class_name => 'Document::OtherFile')
+    Document.expects(:define_variants).with do |model, options|
+      model == Document::OtherFile && options == { :process => process_proc, :class => MyVariant }
+    end
     
     Document.has_attachments :other_files, :as => :attachable, :order => :updated_at,
-                                           :process => proc {}, :class => MyVariant, :filename_scheme => :token, :variants => [:hoge, :fuga]
+                                           :process => process_proc, :class => MyVariant, :filename_scheme => :token
   end
   
   it "should not define an association if an association for the given name exists" do
     Document.expects(:has_one).never
-    Document.expects(:define_variants).with(:watermark, {})
+    Document.expects(:define_variants).with do |model, options|
+      model == Document::Watermark && options == {}
+    end
     
     Document.expects(:has_many).never
-    Document.expects(:define_variants).with(:images, {})
+    Document.expects(:define_variants).with do |model, options|
+      model == Document::Image && options == {}
+    end
     
     Document.has_attachment :watermark, :as => :attachable
     Document.has_attachments :images, :as => :attachable
@@ -129,7 +133,14 @@ describe "AttachmentSan::Has, concerning attachment definitions with only a defa
     Document::MiscFile.variant_reflections.length.should == 1
     Document::MiscFile.variant_reflections.first[:name].should == :original
     Document::MiscFile.variant_reflections.first[:class].should == MyOriginal
-    Document::MiscFile.variant_reflections.first[:filename_scheme].should == :keep_original
+    # Document::MiscFile.variant_reflections.first[:filename_scheme].should == :keep_original
     Document::MiscFile.variant_reflections.first[:process].call.should == :from_process_proc
+  end
+end
+
+describe "AttachmentSan::Has, concerning attachment definitions overriding attachment base class options" do
+  it "should merge the options onto the attachment_san_options of the attachment model subclass" do
+    OtherDocument::Image.attachment_san_options[:base_path].should == '/other/base'
+    OtherDocument::Image.attachment_san_options[:public_base_path].should == '/other/public'
   end
 end

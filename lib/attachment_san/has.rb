@@ -1,6 +1,7 @@
 module AttachmentSan
   module Has
-    VALID_OPTIONS = [:name, :process, :class, :variants, :filename_scheme]
+    MODEL_OPTIONS   = [:base_path, :public_base_path, :extension, :filename_scheme]
+    VARIANT_OPTIONS = [:name, :process, :class, :variants, :filename_scheme]
     
     def has_attachment(name, options = {})
       define_attachment_association :has_one, name, options
@@ -13,20 +14,23 @@ module AttachmentSan
     private
     
     def define_attachment_association(macro, name, options)
-      model = define_variants(name, extract_variant_options!(options))
+      model_options = extract_options!(options, MODEL_OPTIONS)
+      model = create_model(name, model_options)
+      
+      variant_options = extract_options!(options, VARIANT_OPTIONS)
+      define_variants(model, variant_options)
+      
       send(macro, name, options.merge(:class_name => model.name)) unless reflect_on_association(name)
     end
     
-    def extract_variant_options!(options)
+    def extract_options!(options, keys)
       options.symbolize_keys!
-      variant_options = options.slice(*VALID_OPTIONS)
-      options.except!(*VALID_OPTIONS)
-      variant_options
+      extracted_options = options.slice(*keys)
+      options.except!(*keys)
+      extracted_options
     end
     
-    def define_variants(name, options)
-      model = create_model(name)
-      
+    def define_variants(model, options)
       original = options[:variants] ? (options[:variants][:original] || {}) : options
       original[:class] ||= Variant::Original if original.is_a?(Hash)
       model.send(:define_variant, :original, original)
@@ -40,11 +44,13 @@ module AttachmentSan
       model
     end
     
-    def create_model(name)
+    def create_model(name, options)
       name = name.to_s.classify
       modulized_mod_get(name)
     rescue NameError
-      const_set(name, Class.new(AttachmentSan.attachment_class))
+      model = const_set(name, Class.new(AttachmentSan.attachment_class))
+      model.attachment_san_options.merge!(options)
+      model
     end
   end
 end

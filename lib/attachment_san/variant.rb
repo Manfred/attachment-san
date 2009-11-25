@@ -65,11 +65,11 @@ module AttachmentSan
     end
     
     def base_path
-      base_options[:base_path]
+      @reflection[:base_path] || base_options[:base_path]
     end
     
     def public_base_path
-      base_options[:public_base_path]
+      @reflection[:public_base_path] || base_options[:public_base_path]
     end
     
     def filename_scheme
