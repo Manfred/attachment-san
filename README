@@ -1,8 +1,6 @@
 Attachment-San
 
-  Plugin for easy and rich attachment manipulation.
-
-  Although the ideas behind Attachment-San are different, it borrows heavily on both attachment_fu and acts_as_attachment by Rick Olson. 
+  Plugin for easy and flexible attachment handling.
 
 Dependencies
 
