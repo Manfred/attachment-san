@@ -10,3 +10,10 @@ process do |files|
   
   Ruby.run_tests tests
 end
+
+# FIXME!
+# options.on "-d", "--rdoc", "Re-generates documentation" do
+# process do |files|
+#   execute "rake docs:generate"
+# end
+# end

@@ -3,6 +3,11 @@ require "fileutils"
 
 module AttachmentSan
   class Variant
+    ##
+    #
+    # This module extends an attachment model, making the reflect_on_variant
+    # method available as a class method.
+    #
     module ClassMethods
       def self.extended(model) #:nodoc:
         model.class_inheritable_accessor :variant_reflections
@@ -29,7 +34,7 @@ module AttachmentSan
       
       private
       
-      def define_variant(name, options_or_class_or_proc)
+      def define_variant(name, options_or_class_or_proc) #:nodoc:
         return if reflect_on_variant(name)
         
         reflection =
@@ -68,7 +73,17 @@ module AttachmentSan
   end
   
   class Variant
-    attr_reader :record, :reflection
+    ##
+    #
+    # Returns the record that the variant is for.
+    #
+    attr_reader :record
+    
+    ##
+    #
+    # Returns the variant’s reflection hash.
+    #
+    attr_reader :reflection
     
     ##
     #
@@ -136,7 +151,9 @@ module AttachmentSan
     #
     #   class Member < ActiveRecord::Base
     #     has_attachment :photo, :variants => {
-    #       :inline => proc { |variant| Miso::Image.crop(variant.original.file_path, variant.file_path, 400, 400) }
+    #       :inline => proc { |variant|
+    #         Miso::Image.crop(variant.original.file_path, variant.file_path, 400, 400)
+    #       }
     #     }
     #   end
     #
@@ -159,14 +176,16 @@ module AttachmentSan
     # ==== Examples
     #
     #   class Member < ActiveRecord::Base
-    #     has_attachment :photo, :extension => :keep_original, :variants => { :inline => proc { … } }
+    #     has_attachment :photo, :extension => :keep_original,
+    #                            :variants => { :inline => proc { … } }
     #   end
     #
     #   member.photo.extension # => 'jpg'
     #   member.photo.inline.extension # => 'jpg'
     #
     #   class Member < ActiveRecord::Base
-    #     has_attachment :photo, :extension => :png, :variants => { :inline => proc { … } }
+    #     has_attachment :photo, :extension => :png,
+    #                            :variants => { :inline => proc { … } }
     #   end
     #
     #   member.photo.extension # => 'jpg'
@@ -212,32 +231,35 @@ module AttachmentSan
     #
     # ==== Examples
     #
-    # Consider a file with the name "image.jpg":
-    #
+    #   # Consider a file with the name "image.jpg":
     #   member.filename # => "image.jpg"
     #
     #   class Member < ActiveRecord::Base
-    #     has_attachment :photo, :filename_scheme => :variant_name, :variants => { :inline => proc { … } }
+    #     has_attachment :photo, :filename_scheme => :variant_name,
+    #                            :variants => { :inline => proc { … } }
     #   end
     #
     #   member.photo.inline.filename # => "inline.jpg"
     #
     #   class Member < ActiveRecord::Base
-    #     has_attachment :photo, :filename_scheme => :keep_original, :variants => { :inline => proc { … } }
+    #     has_attachment :photo, :filename_scheme => :keep_original,
+    #                            :variants => { :inline => proc { … } }
     #   end
     #
     #   member.photo.original.filename # => "image.jpg"
     #   member.photo.inline.filename # => "image.inline.jpg"
     #
     #   class Member < ActiveRecord::Base
-    #     has_attachment :photo, :filename_scheme => :record_identifier, :variants => { :inline => proc { … } }
+    #     has_attachment :photo, :filename_scheme => :record_identifier,
+    #                            :variants => { :inline => proc { … } }
     #   end
     #
     #   member.photo.id # => 123
     #   member.photo.inline.filename # => "/photo/123/inline.jpg"
     #
     #   class Member < ActiveRecord::Base
-    #     has_attachment :photo, :filename_scheme => :token, :variants => { :inline => proc { … } }
+    #     has_attachment :photo, :filename_scheme => :token,
+    #                            :variants => { :inline => proc { … } }
     #   end
     #
     #   member.token # => "g41b6c3f"
@@ -319,9 +341,7 @@ module AttachmentSan
     
     ##
     #
-    # = AttachmentSan::Variant::Original
-    #
-    # This is the class that’s used for the ‘original’ variants. It overrides
+    # This is the class that is used for the ‘original’ variants. It overrides
     # a few methods, since an ‘original’ should be treated slightly different.
     #
     class Original < Variant
@@ -341,24 +361,23 @@ module AttachmentSan
       #
       # ==== Examples
       #
-      # Consider a file with the name "image.jpg":
-      #
+      #   # Consider a file with the name "image.jpg":
       #   member.filename # => "image.jpg"
       #
       #   class Member < ActiveRecord::Base
-      #     has_attachment :photo, :filename_scheme => :keep_original, :variants => { :inline => proc { … } }
+      #     has_attachment :photo, :filename_scheme => :keep_original,
+      #                            :variants => { :inline => proc { … } }
       #   end
       #
-      # Does not include the variant name:
-      #
+      #   # Does not include the variant name:
       #   member.photo.original.filename # => "image.jpg"
       #
       #   class Member < ActiveRecord::Base
-      #     has_attachment :photo, :filename_scheme => :token, :variants => { :inline => proc { … } }
+      #     has_attachment :photo, :filename_scheme => :token,
+      #                            :variants => { :inline => proc { … } }
       #   end
       #
-      # Does not include the variant name:
-      #
+      #   # Does not include the variant name:
       #   member.photo.original.filename # => "/g4/1b/6c/3f/image.jpg"
       #
       def filename

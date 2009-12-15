@@ -23,9 +23,17 @@ rescue LoadError
 end
 
 namespace :docs do
-  Rake::RDocTask.new(:generate) do |rd|
-    rd.main = "README"
-    rd.rdoc_files.include("README", "LICENSE", "lib/**/*.rb")
-    rd.options << "--all" << "--charset" << "utf-8"
+  begin
+    require 'rubygems'
+    gem 'rdoc', '>= 2'
+    
+    Rake::RDocTask.new(:generate) do |rdoc|
+      rdoc.title = "AttachmentSan"
+      rdoc.main  = "README"
+      rdoc.rdoc_files.include("README", "LICENSE", "lib/**/*.rb")
+      rdoc.options << "--all" << "--charset=utf-8" << "--format=darkfish"
+    end
+  rescue LoadError
+    puts "[!] In order to generate docs, please install the `rdoc 2.x.x' and `darkfish-rdoc' gems."
   end
 end

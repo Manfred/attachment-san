@@ -4,30 +4,38 @@ require "attachment_san/variant"
 
 ##
 #
-# = AttachmentSan
+# AttachmentSan is an attachment extension for your model, it tries to be as
+# flexible as possible.
 #
-# AttachmentSan is an attachment extension for your model that tries to be as
-# flexible as possible. It has no assumptions on your model, besides that it
-# should have write accessors for +filename+ and +content_type+.
+# The only assumptions made, are that your model should have write accessors
+# for +filename+ and +content_type+. And a read accessor for +token+, _if_ you
+# intend to use that +:filename_scheme+ option.
 #
-# The base principle is that an attachment should always store, and give access
-# to, the original file. Besides that, an attachment could have an arbitray
-# amount of variants. For instance, a `thumbnail' variant.
+# The base principle is; an attachment should store, and give access to, the
+# original file. Besides that, an attachment could have an arbitray amount of
+# ‘variants’. For instance, in the case of an image; a ‘thumbnail’ variant.
 #
-# A ‘variant’ does nothing besides providing path information about the file
-# for said variant. Instead of trying to be ‘smart’ about image manipulation,
-# and the likes, it simply calls a user defined proc. Or copies the file to the
-# destination in the case of an ‘original variant’.
+# A ‘variant’ does *nothing* besides providing path information about the file
+# for said variant. Instead of trying to be ‘smart’ about image manipulation
+# and the likes, it simply calls a user defined proc from where you can do
+# whatever needs to be done.
+#
+# See the AttachmentSan::Initializer#attachment_san method to get started.
 #
 module AttachmentSan
+  ##
+  #
+  # This module extends ActiveRecord::Base, which makes the attachment_san
+  # method available as a class method on your model.
+  #
   module Initializer
     ##
     #
-    # Defines a model to be the attachment base model and includes the
-    # AttachmentSan module. All attachment classes created by AttachmentSan
-    # will inherit from said base model.
+    # Defines the model that it is called upon to be the attachment base model.
+    # It will also include the AttachmentSan module. All attachment classes,
+    # created by AttachmentSan, will inherit from said base model.
     #
-    # You can give it a default options hash for the variants.
+    # You can give it a options hash with defaults for the variants.
     #
     # ==== Option parameters
     #
@@ -35,7 +43,7 @@ module AttachmentSan
     #   The file path to the public document root where the attachment files
     #   are to be stored.
     # [+:public_base_path+]
-    #   The file path to from the public document root to the root where the
+    #   The file path to the public document root to the root where the
     #   attachment files are to be stored.
     # [+:extension+]
     #   The scheme to use for the attachment variant extension. See
@@ -47,14 +55,12 @@ module AttachmentSan
     # ==== Examples
     #
     #   class Attachment < ActiveRecord::Base
-    #     attachment_san
-    #   end
-    #   AttachmentSan.attachment_class # => Attachment
-    #
-    #   class Attachment < ActiveRecord::Base
     #     attachment_san :base_path => Rails.root + 'public/files',
     #                    :filename_scheme => :variant_name
     #   end
+    #
+    #   AttachmentSan.attachment_class # => Attachment
+    #
     def attachment_san(options = {})
       include AttachmentSan
       
@@ -73,11 +79,9 @@ module AttachmentSan
   #
   # Returns the attachment model in which AttachmentSan is included.
   #
-  # TODO: One might want to have multiple attachment models.
-  #
   mattr_accessor :attachment_class
   
-  def self.included(model) #:nodoc
+  def self.included(model) #:nodoc:
     self.attachment_class = model
     model.extend Variant::ClassMethods
     
@@ -96,7 +100,8 @@ module AttachmentSan
   ##
   #
   # Assigns the +filename+ and +content_type+ of the +uploaded_file+ to the
-  # model. The +uploaded_file+ instance will be stored in +@uploaded_file+.
+  # model. The +uploaded_file+ instance will be stored in the
+  # <tt>@uploaded_file</tt> instance variable.
   #
   # Before the values are assigned, the +before_upload+ callback chain runs.
   # Likewise, after assigning the values, the +after_upload+ callback chain
@@ -122,7 +127,7 @@ module AttachmentSan
   # 
   # Returns the filename’s extension, if available.
   #
-  # ===== Examples
+  # ==== Examples
   #
   #   asset.filename # => "image.jpg"
   #   asset.extension # => "jpg"
@@ -135,7 +140,7 @@ module AttachmentSan
   
   ##
   #
-  # Returns the filename without its extension.
+  # Returns the filename _without_ its extension.
   #
   # ==== Examples
   #

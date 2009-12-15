@@ -58,6 +58,7 @@ end
 describe "AttachmentSan, class methods" do
   before do
     @upload = rails_icon
+    p rails_icon
     @attachment = Attachment.new(:uploaded_file => @upload)
   end
   
