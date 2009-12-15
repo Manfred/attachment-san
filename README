@@ -1,8 +1,5 @@
-Attachment-San
+= AttachmentSan
 
-  Plugin for easy and flexible attachment handling.
+An attachment extension for your model, it tries to be as flexible as possible.
 
-Dependencies
-
-  General: A recent Rails (at least 2.0, though it's most often tested on Edge)
-  Development: test/spec and SQLite3
+See the AttachmentSan docs for information.
