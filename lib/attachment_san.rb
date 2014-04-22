@@ -73,6 +73,14 @@ module AttachmentSan
       opt[:base_path] ||= Rails.root + File.join('public', opt[:public_base_path])
       opt
     end
+
+    def after_upload(method)
+      set_callback :upload, :after, method
+    end
+
+    def before_upload(method)
+      set_callback :upload, :before, method
+    end
   end
   
   ##
@@ -86,7 +94,7 @@ module AttachmentSan
     model.extend Variant::ClassMethods
     
     model.class_attribute :attachment_san_options
-    model.define_callbacks :before_upload, :after_upload
+    model.define_callbacks :upload
     model.after_create :process_variants!
   end
   
