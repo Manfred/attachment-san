@@ -122,13 +122,11 @@ module AttachmentSan
   #   typical multiform request.
   #
   def uploaded_file=(uploaded_file)
-    callback :before_upload
-    
-    @uploaded_file    = uploaded_file
-    self.filename     = uploaded_file.original_filename
-    self.content_type = uploaded_file.content_type.strip
-    
-    callback :after_upload
+    run_callbacks :upload do
+      @uploaded_file    = uploaded_file
+      self.filename     = uploaded_file.original_filename
+      self.content_type = uploaded_file.content_type.strip
+    end
   end
   
   ##
