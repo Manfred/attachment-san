@@ -15,6 +15,6 @@ class OptionsStub
     # no we don't!
   end
   
-  class_inheritable_accessor :attachment_san_options
+  class_attribute :attachment_san_options
   extend AttachmentSan::Initializer
 end

@@ -85,7 +85,7 @@ module AttachmentSan
     self.attachment_class = model
     model.extend Variant::ClassMethods
     
-    model.class_inheritable_accessor :attachment_san_options
+    model.class_attribute :attachment_san_options
     model.define_callbacks :before_upload, :after_upload
     model.after_create :process_variants!
   end

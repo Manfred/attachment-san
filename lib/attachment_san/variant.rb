@@ -10,7 +10,7 @@ module AttachmentSan
     #
     module ClassMethods
       def self.extended(model) #:nodoc:
-        model.class_inheritable_accessor :variant_reflections
+        model.class_attribute :variant_reflections
         model.variant_reflections = []
       end
       
@@ -54,7 +54,7 @@ module AttachmentSan
         reflection[:name] = name = name.to_sym
         variant_reflections << reflection
         
-        # def original
+        # def origina
         #   @original ||= begin
         #     reflection = self.class.reflect_on_variant(:original)
         #     reflection.klass.new(self, reflection)
