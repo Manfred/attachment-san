@@ -9,11 +9,13 @@ module AttachmentSan
     # method available as a class method.
     #
     module ClassMethods
-      def self.extended(model) #:nodoc:
-        model.class_attribute :variant_reflections
-        model.variant_reflections = []
+      def variant_reflections
+        @variant_reflections ||= []
       end
-      
+
+      def variant_reflections=(reflections)
+        @variant_reflections = reflections
+      end
       ##
       #
       # Returns the variant reflection hash for the given variant name.
