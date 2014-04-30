@@ -402,7 +402,7 @@ module AttachmentSan
       def process!
         return super if @reflection[:process]
         mkdir!
-        File.open(file_path, 'w') { |f| f.write @record.uploaded_file.read }
+        File.open(file_path, 'wb') { |f| f.write @record.uploaded_file.read }
       end
     end
   end
