@@ -9,6 +9,14 @@ module AttachmentSan
     # method available as a class method.
     #
     module ClassMethods
+      def attachment_san_options
+        @attachment_san_options ||= {}
+      end
+
+      def attachment_san_options=(attachment_san_options)
+        @attachment_san_options = attachment_san_options
+      end
+
       def variant_reflections
         @variant_reflections ||= []
       end

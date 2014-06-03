@@ -136,7 +136,7 @@ module AttachmentSan
       modulized_mod_get(name)
     rescue NameError
       model = const_set(name, Class.new(AttachmentSan.attachment_class))
-      model.attachment_san_options.merge!(options)
+      model.attachment_san_options = AttachmentSan.attachment_class.attachment_san_options.merge(options)
       model
     end
   end

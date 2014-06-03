@@ -92,8 +92,6 @@ module AttachmentSan
   def self.included(model) #:nodoc:
     self.attachment_class = model
     model.extend Variant::ClassMethods
-    
-    model.class_attribute :attachment_san_options
     model.define_callbacks :upload
     model.after_create :process_variants!
   end
