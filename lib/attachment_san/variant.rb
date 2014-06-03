@@ -408,9 +408,11 @@ module AttachmentSan
       # the uploaded file and write it to the location returned by file_path.
       #
       def process!
-        return super if @reflection[:process]
-        mkdir!
-        File.open(file_path, 'wb') { |f| f.write @record.uploaded_file.read }
+        ActiveSupport::Notifications.instrument('attachment_san.process_original', variant: self) do
+          return super if @reflection[:process]
+          mkdir!
+          File.open(file_path, 'wb') { |f| f.write @record.uploaded_file.read }
+        end
       end
     end
   end

@@ -171,6 +171,10 @@ module AttachmentSan
   # Calls +process!+ on each variant instance returned by +variants+.
   #
   def process_variants!
-    variants.each(&:process!)
+    variants.each do |variant|
+      ActiveSupport::Notifications.instrument('attachment_san.process_variant', variant: variant) do
+        variant.process!
+      end
+    end
   end
 end
