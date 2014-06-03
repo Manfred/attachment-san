@@ -69,6 +69,10 @@ module AttachmentSan
         @tempfile.path
       end
       
+      def to_s
+        raise TypeError, "no implicit conversion of AttachmentSan::UploadHelpers::FakeUploadFile into String"
+      end
+      
       alias local_path path
       
       def method_missing(method_name, *args, &block) #:nodoc:

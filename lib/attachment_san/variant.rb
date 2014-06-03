@@ -411,7 +411,7 @@ module AttachmentSan
       # Returns true when there is an uploaded file on disk.
       #
       def has_upload?
-        @record.uploaded_file && File.exist?(@record.uploaded_file)
+        @record.uploaded_file && File.exist?(@record.uploaded_file.path)
       end
       
       ##
