@@ -348,8 +348,10 @@ module AttachmentSan
     # in the variant’s reflection hash.
     #
     def process!
-      mkdir!
-      @reflection[:process].call(self)
+      if original.has_upload?
+        mkdir!
+        @reflection[:process].call(self)
+      end
     end
     
     ##
@@ -402,6 +404,14 @@ module AttachmentSan
         else
           super
         end
+      end
+      
+      ##
+      #
+      # Returns true when there is an uploaded file on disk.
+      #
+      def has_upload?
+        @record.uploaded_file && File.exist?(@record.uploaded_file)
       end
       
       ##
