@@ -1,4 +1,3 @@
-require 'test/unit'
 require 'tempfile'
 require 'fileutils'
 
@@ -106,5 +105,3 @@ module AttachmentSan
     end
   end
 end
-
-Test::Unit::TestCase.send(:include, AttachmentSan::UploadHelpers)
