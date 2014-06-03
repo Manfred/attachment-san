@@ -235,6 +235,23 @@ module AttachmentSan
       "#{@record.filename_without_extension}.#{name}"
     end
     
+    def filename_without_extension
+      case filename_scheme
+      when :variant_name
+        name.to_s
+      when :keep_original
+        filename_with_variant_name
+      when :record_identifier
+        # For now we take only the demodulized attachment class name.
+        @record_class_name ||= @record.class.name.demodulize.underscore.pluralize
+        "/#{@record_class_name}/#{@record.to_param}/#{name}"
+      when :token
+        File.join(token, filename_with_variant_name)
+      else
+        raise ArgumentError, "The :filename_scheme option should be one of `:token', `:filename_scheme', `:record_identifier', or `:variant_name', it currently is `#{filename_scheme.inspect}'."
+      end
+    end
+    
     ##
     #
     # Returns the variant’s filename, based on the +:filename_scheme+ option.
@@ -277,25 +294,11 @@ module AttachmentSan
     #   member.photo.inline.filename # => "/g4/1b/6c/3f/image.inline.jpg"
     #
     def filename
-      unless @filename
-        @filename = 
-          case filename_scheme
-          when :variant_name
-            name.to_s
-          when :keep_original
-            filename_with_variant_name
-          when :record_identifier
-            # For now we take only the demodulized attachment class name.
-            @record_class_name ||= @record.class.name.demodulize.underscore.pluralize
-            "/#{@record_class_name}/#{@record.to_param}/#{name}"
-          when :token
-            File.join(token, filename_with_variant_name)
-          else
-            raise ArgumentError, "The :filename_scheme option should be one of `:token', `:filename_scheme', `:record_identifier', or `:variant_name', it currently is `#{filename_scheme.inspect}'."
-          end
-        @filename << ".#{extension}" unless extension.blank?
+      if extension.blank?
+        filename_without_extension
+      else
+        filename_without_extension << ".#{extension}"
       end
-      @filename
     end
     
     ##
@@ -391,15 +394,14 @@ module AttachmentSan
       #   member.photo.original.filename # => "/g4/1b/6c/3f/image.jpg"
       #
       def filename
-        @filename ||=
-          case filename_scheme
-          when :token
-            File.join(token, @record.filename)
-          when :keep_original
-            @record.filename
-          else
-            super
-          end
+        case filename_scheme
+        when :token
+          File.join(token, @record.filename)
+        when :keep_original
+          @record.filename
+        else
+          super
+        end
       end
       
       ##
