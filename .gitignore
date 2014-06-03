@@ -1,4 +1,4 @@
-test/db
+test/tmp
 test/log
 html
 .svn

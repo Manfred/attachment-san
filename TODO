@@ -1,0 +1,4 @@
+* Allow the user to override any of the attachment_san_options on the dynamically created attachment subclasses.
+* Do we need to sanitize the original filename, eg lowercase.
+* Make :filename_scheme => :record_identifier also use nesting under parent resources. Eg /resources/1/images/2/filename
+* The *might* have multiple attachment base classes. Not needed yet though.

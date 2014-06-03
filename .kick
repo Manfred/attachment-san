@@ -1,0 +1,19 @@
+recipe :ruby
+
+process do |files|
+  tests = files.take_and_map do |file|
+    case file
+    when /^lib\/.*?(\w+)\.rb$/
+      "test/#{$1}_test.rb"
+    end
+  end
+  
+  Ruby.run_tests tests
+end
+
+# FIXME!
+# options.on "-d", "--rdoc", "Re-generates documentation" do
+# process do |files|
+#   execute "rake docs:generate"
+# end
+# end
