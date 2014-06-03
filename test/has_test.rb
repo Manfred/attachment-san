@@ -4,23 +4,20 @@ describe "AttachmentSan::Has" do
   process_proc = proc {}
   
   it "should pass on any unknown options to the has_one macro" do
-    Document.expects(:has_one).with(:other_file, :as => :attachable, :order => :updated_at, :class_name => 'Document::OtherFile')
+    Document.expects(:has_one).with(:other_file, :as => :attachable, :class_name => 'Document::OtherFile')
     Document.expects(:define_variants).with do |model, options|
       model == Document::OtherFile && options == { :process => process_proc, :class => MyVariant }
     end
-    
-    Document.has_attachment :other_file, :as => :attachable, :order => :updated_at,
-                                         :process => process_proc, :class => MyVariant, :filename_scheme => :token
+    Document.has_attachment :other_file, :as => :attachable, :process => process_proc, :class => MyVariant, :filename_scheme => :token
   end
   
   it "should pass on any unknown options to the has_many macro" do
-    Document.expects(:has_many).with(:other_files, :as => :attachable, :order => :updated_at, :class_name => 'Document::OtherFile')
+    Document.expects(:has_many).with(:other_files, :as => :attachable, :class_name => 'Document::OtherFile')
     Document.expects(:define_variants).with do |model, options|
       model == Document::OtherFile && options == { :process => process_proc, :class => MyVariant }
     end
     
-    Document.has_attachments :other_files, :as => :attachable, :order => :updated_at,
-                                           :process => process_proc, :class => MyVariant, :filename_scheme => :token
+    Document.has_attachments :other_files, :as => :attachable, :process => process_proc, :class => MyVariant, :filename_scheme => :token
   end
   
   it "should not define an association if an association for the given name exists" do
