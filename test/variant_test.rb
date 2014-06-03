@@ -189,3 +189,16 @@ describe "AttachmentSan::Variant, concerning a default variant with extra option
     result.should == :from_process_proc
   end
 end
+
+describe "AttachmentSan::Variant without an uploaded file" do
+  before do
+    @document = Document.new
+    @variant = @document.misc_files.build.original
+  end
+  
+  it "should not break during processing" do
+    lambda do
+      @variant.process!
+    end.should.not.raise
+  end
+end
