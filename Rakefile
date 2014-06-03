@@ -1,4 +1,3 @@
-require 'rake/rdoctask'
 require 'rake/testtask'
 
 desc "Run all tests by default"
@@ -26,6 +25,7 @@ namespace :docs do
   begin
     require 'rubygems'
     gem 'rdoc', '>= 2'
+    require 'rdoc/task'
     
     Rake::RDocTask.new(:generate) do |rdoc|
       rdoc.title = "AttachmentSan"
