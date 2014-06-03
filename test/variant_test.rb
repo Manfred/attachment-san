@@ -64,10 +64,10 @@ describe "A AttachmentSan::Variant instance in general" do
     @document = OtherDocument.new
     @image = @document.images.build(:uploaded_file => @upload)
     
-    @image.original.base_path.should == '/other/base'
+    @image.original.base_path.should == File.join(TMP_DIR, '/other/base')
     @image.original.public_base_path.should == '/other/public'
     
-    @image.normal.base_path.should == '/yet/another/base'
+    @image.normal.base_path.should == File.join(TMP_DIR, '/yet/another/base')
     @image.normal.public_base_path.should == '/other/public'
   end
   

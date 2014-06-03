@@ -137,7 +137,7 @@ end
 
 describe "AttachmentSan::Has, concerning attachment definitions overriding attachment base class options" do
   it "should merge the options onto the attachment_san_options of the attachment model subclass" do
-    OtherDocument::Image.attachment_san_options[:base_path].should == '/other/base'
+    OtherDocument::Image.attachment_san_options[:base_path].should == File.join(TMP_DIR, '/other/base')
     OtherDocument::Image.attachment_san_options[:public_base_path].should == '/other/public'
   end
 end
