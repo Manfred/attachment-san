@@ -41,20 +41,20 @@ end
 
 describe "AttachmentSan::Has, concerning defining attachment model subclasses" do
   it "should create an attachment model class when defining a single attachment association" do
-    Document.reflect_on_association(:logo).klass.should.be Document::Logo
-    Document::Logo.superclass.should.be AttachmentSan.attachment_class
+    Document.reflect_on_association(:logo).klass.should == Document::Logo
+    Document::Logo.superclass.should == AttachmentSan.attachment_class
   end
   
   it "should create an attachment model class when defining a collection attachment association" do
-    Document.reflect_on_association(:images).klass.should.be Document::Image
-    Document::Image.superclass.should.be AttachmentSan.attachment_class
+    Document.reflect_on_association(:images).klass.should == Document::Image
+    Document::Image.superclass.should == AttachmentSan.attachment_class
   end
   
   it "should create different attachment model classes for different defining model classes" do
-    Document::Logo.reflect_on_variant(:header)[:class].should.be MyVariant
+    Document::Logo.reflect_on_variant(:header)[:class].should == MyVariant
     
-    OtherDocument.reflect_on_association(:logo).klass.should.be OtherDocument::Logo
-    OtherDocument::Logo.reflect_on_variant(:header)[:class].should.be MyOtherVariant
+    OtherDocument.reflect_on_association(:logo).klass.should == OtherDocument::Logo
+    OtherDocument::Logo.reflect_on_variant(:header)[:class].should == MyOtherVariant
   end
   
   it "should not look for existing constants outside the defining class's namespace" do
@@ -62,7 +62,7 @@ describe "AttachmentSan::Has, concerning defining attachment model subclasses" d
     class Foo < TotallyDifferent; end
     
     Document.has_attachment :foo
-    Document.reflect_on_association(:foo).klass.should.be Document::Foo
+    Document.reflect_on_association(:foo).klass.should == Document::Foo
   end
 end
 
@@ -115,15 +115,15 @@ describe "AttachmentSan::Has, concerning a collection of associated attachments"
   
   it "should define only a default original variant if no others are given" do
     variants = @document.misc_files.map(&:original)
-    variants.should.all { |v| v.name == :original }
-    variants.should.all { |v| v.instance_of? AttachmentSan::Variant }
+    variants.each { |v| v.name.should == :original }
+    variants.each { |v| v.should.be.kind_of AttachmentSan::Variant }
   end
   
   it "should define a default original variant and the ones specified" do
     %w{ original thumbnail medium_sized download }.each do |name|
       variants = @document.images.map(&name.to_sym)
-      variants.should.all { |v| v.name == name }
-      variants.should.all { |v| v.instance_of? AttachmentSan::Variant }
+      variants.each { |v| v.name.to_s.should == name }
+      variants.each { |v| v.should.be.kind_of AttachmentSan::Variant }
     end
   end
 end

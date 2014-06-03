@@ -58,22 +58,21 @@ end
 describe "AttachmentSan, class methods" do
   before do
     @upload = rails_icon
-    p rails_icon
     @attachment = Attachment.new(:uploaded_file => @upload)
   end
   
   it "should assign the base attachment class when attachment_san is called" do
-    AttachmentSan.attachment_class.should.be Attachment
+    AttachmentSan.attachment_class.should == Attachment
   end
   
   it "should call a before_upload filter chain before actually assigning the new uploaded file" do
     new_upload = rails_icon
     @attachment.uploaded_file = new_upload
-    @attachment.file_before_upload.should.be @upload
+    @attachment.file_before_upload.should == @upload
   end
   
   it "should call an after_upload filter chain after assigning the new uploaded file" do
-    @attachment.file_after_upload.should.be @upload
+    @attachment.file_after_upload.should == @upload
   end
   
   it "should define a variant with options" do
@@ -89,7 +88,7 @@ describe "AttachmentSan, instance methods" do
   end
   
   it "should make a model accept a file upload" do
-    @attachment.uploaded_file.should.be @upload
+    @attachment.uploaded_file.should == @upload
   end
   
   it "should assign the original filename to the model" do
@@ -106,7 +105,7 @@ describe "AttachmentSan, instance methods" do
     @attachment.extension.should == 'png'
     
     @attachment.stubs(:filename).returns('Rakefile')
-    @attachment.extension.should.be nil
+    @attachment.extension.should.be.nil
   end
   
   it "should return the original filename without extension" do

@@ -3,12 +3,12 @@ require File.expand_path('../test_helper', __FILE__)
 describe "AttachmentSan's variant class methods" do
   it "should return the variant class to use" do
     reflection = Document::Logo.reflect_on_variant(:header)
-    reflection[:class].should.be MyVariant
+    reflection[:class].should == MyVariant
   end
   
   it "should by default use the AttachmentSan::Variant class" do
     reflection = Document::Image.reflect_on_variant(:thumbnail)
-    reflection[:class].should.be AttachmentSan::Variant
+    reflection[:class].should == AttachmentSan::Variant
   end
   
   it "should not define a variant twice" do

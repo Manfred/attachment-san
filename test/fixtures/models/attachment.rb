@@ -13,8 +13,8 @@ class Attachment < ActiveRecord::Base
   belongs_to :attachable, :polymorphic => true
   
   attr_accessor :file_before_upload
-  before_upload { |record| record.file_before_upload = record.uploaded_file }
+  before_upload ->(record) { record.file_before_upload = record.uploaded_file }
   
   attr_accessor :file_after_upload
-  after_upload  { |record| record.file_after_upload  = record.uploaded_file }
+  after_upload ->(record) { record.file_after_upload  = record.uploaded_file }
 end
